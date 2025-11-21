@@ -9,9 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "d3": "^7.9.0",
     "next": "16.0.3",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "react-scrollama": "^2.4.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

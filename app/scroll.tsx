@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Scrollama, Step } from 'react-scrollama';
 import HeatMap from './heatmap';
+import RadarChart from './radar';
 
 // This hook sets the dimensions of the current div
 const useResizeObserver = (ref) => {
@@ -41,6 +42,12 @@ const GraphStep = ({ index, currentStepIndex }) => {
                     `}
                 >
                     {/* Only render HeatMap if we have dimensions */}
+                    {(dimensions && index === 2) && (
+                        <RadarChart 
+                            width={dimensions.width} 
+                            height={dimensions.height} 
+                        />
+                    )}
                     {(dimensions && index === 3) && (
                         <HeatMap 
                             width={dimensions.width} 

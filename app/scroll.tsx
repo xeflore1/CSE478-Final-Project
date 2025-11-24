@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Scrollama, Step } from 'react-scrollama';
 import HeatMap from './heatmap';
+import LineChart from './linechart';
 
 // This hook sets the dimensions of the current div
 const useResizeObserver = (ref) => {
@@ -40,6 +41,12 @@ const GraphStep = ({ index, currentStepIndex }) => {
                     ${currentStepIndex === index ? 'opacity-100 scale-100' : 'opacity-40 scale-95'}
                     `}
                 >
+                    {(dimensions && index === 2) && (
+                        <LineChart 
+                            width={dimensions.width} 
+                            height={dimensions.height} 
+                        />
+                    )}
                     {/* Only render HeatMap if we have dimensions */}
                     {(dimensions && index === 3) && (
                         <HeatMap 
@@ -66,7 +73,7 @@ const GraphStep = ({ index, currentStepIndex }) => {
                         <p className='text-black'>Insert Description.</p>
                     )}
                     {index === 2 && (
-                        <p className='text-black'>Insert Description.</p>
+                        <p className='text-black'>Line chart Description.</p>
                     )}
                     {index === 3 && (
                         <p className='text-black'>Heat map description.</p>

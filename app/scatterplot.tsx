@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
 // Accept width and height as props
-const LineChart = ({ width, height }) => {
+const ScatterPlot = ({ width, height }) => {
     const ref = useRef(null);
 
     useEffect(() => {
@@ -25,68 +25,45 @@ const LineChart = ({ width, height }) => {
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
         
-        d3.csv("/computers.csv").then(function(data) {
+        d3.csv("/tsne.csv").then(function(data) {
             const dataSubset = data.map(d => ({
-                release_year: +d.release_year,
-                brand: d.brand,
-                price: +d.price
+                dimX: +d.dimX,
+                dimY: +d.dimY,
+                price: +d.price,
+                label: d.label,
+                cpu_cores: +d.cpu_cores
             }));
+
+            const filteredData = dataSubset.filter(d => d.label !== "") // get rid of rows with no label
+            console.log(filteredData)
             
-            const release_year = Array.from(new Set(dataSubset.map(d => d.release_year))).sort(); // X axis
-            const price = Array.from(new Set(dataSubset.map(d => d.price))); // Y axis
-            const brandGroup = d3.group(dataSubset, d => d.brand)
+            // const dimX = Array.from(new Set(filteredData.map(d => d.dimX))).sort(); // X axis
+            // const dimY = Array.from(new Set(filteredData.map(d => d.dimY))); // Y axis
+            // const price = Array.from(new Set(filteredData.map(d => d.price))); // Y axis
+            const chipGroup = d3.group(filteredData, d => d.label)
 
-            const grouped = d3.rollup(
-                dataSubset,  
-                v => d3.mean(v, d => +d.price),
-                d => d.brand,
-                d => d.release_year
-            );
-
-
-            const formattedData = Array.from(grouped, ([brand, yearMap]) => {
-                // Convert the inner Year Map into an array and SORT it
-                // (Sorting is critical for line charts, otherwise the line scribbles back and forth)
-                const values = Array.from(yearMap, ([year, avgPrice]) => ({
-                    release_year: year,
-                    value: avgPrice
-                })).sort((a, b) => a.release_year - b.release_year);
-
-                return { brand, values };
-            });
-
-
-            const ratioData = [];
-            for (const [brand, innerMap] of grouped) {
-                for (const [release_year, value] of innerMap) {
-                    ratioData.push({ brand, release_year, value });
-                }
-            }
-
-            const x = d3.scalePoint()
+            const x = d3.scaleLinear()
                 .range([0, innerWidth - margin.left - margin.right])
-                .domain(release_year)
-                .padding(0.1);
+                .domain([-250, 250])
             svg.append("g")
                 .attr("transform", `translate(0, ${innerHeight})`)
                 .call(d3.axisBottom(x))
                 .selectAll("text")
                     .style("fill", "black")
-            // .select(".domain").remove();
         
             const y = d3.scaleLinear()
                 .range([innerHeight, 0])
-                .domain([1600, 2400])
+                .domain([-250, 250])
             svg.append("g")
-                // .style("font-size", 12)
                 .style("fill", "black")
                 .call(d3.axisLeft(y).tickSize(0))
                 .selectAll("text")
                     .style("fill", "black")
             .select(".domain").remove();
         
-            // const [minValue, maxValue] = d3.extent(ratioData, d => d.value);
-            const groupKeys = Array.from(brandGroup.keys())
+            const groupKeys = Array.from(chipGroup.keys())
+            console.log("keys: ")
+            console.log(groupKeys)
             const myColor = d3.scaleOrdinal(d3.schemeCategory10 )
                 .domain(groupKeys);
             
@@ -118,21 +95,38 @@ const LineChart = ({ width, height }) => {
             //     d3.select(this).style("stroke", "none").style("opacity", 0.8);
             // }
 
-            svg.selectAll(".line")
-                .data(formattedData)
-                .join("path")
-                    .attr("fill", "none")
-                    .attr("stroke", function(d) { 
-                        return myColor(d.brand)})
-                    .attr("stroke-width", 1.5)
-                    .attr("d", function(d){
-                        return d3.line()
-                            .x(function(d) { 
-                                return x(d.release_year); })
-                            .y(function(d) { 
-                                return y(d.value); })
-                            (d.values)
-                    })
+            // add circles for each mob
+            svg.selectAll("circle")
+                .data(filteredData, (d, i) => i)
+                .enter()
+                .append("circle")
+                    .attr("cx", function(d) { return x(d.dimX) } )  // center x coord
+                    .attr("cy", function(d) { return y(d.dimY) }) // center y coord
+                    .attr("r", function(d) { return findCircleSize(d.price) }) // radius
+                    .attr('fill', function(d) { return myColor(d.label) })
+                    .attr("stroke", "black")
+                    // .on("mouseover", function(event,d) {
+                    //     d3.select(this)
+                    //         .style("stroke", "blue")
+                    //         .style("stroke-width", 3);
+                    //     div.transition()
+                    //         .duration(200)
+                    //         .style("opacity", 1);
+                    //     div.html("Mob: " + d.name + "<br/>Health: " + d.health + "<br/>Damage: " + d.damage);
+                    // })
+                    // .on("mousemove", function(event) {
+                    //     div.style("left", (event.pageX) + "px")
+                    //     .style("top", (event.pageY - 28) + "px");
+                    // })
+                    // .on("mouseout", function(d) {
+                    //     d3.select(this)
+                    //         .style("stroke", "black")
+                    //         .style("stroke-width", 1);
+                    //     div.transition()
+                    //         .duration(500)
+                    //         .style("opacity", 0);
+                    // })
+                    // .on("click", handleCircleClick); 
             
             // Centered Title
             svg.append("text")
@@ -141,7 +135,7 @@ const LineChart = ({ width, height }) => {
                 .attr("y", -20)
                 .style("font-size", "14px")
                 .style("fill", "black")
-                .text("Line chart");
+                .text("Scatter plot");
 
             // Add one dot in the legend for each name.
             var size = 20
@@ -174,4 +168,40 @@ const LineChart = ({ width, height }) => {
     return <div ref={ref} className="relative w-full h-full" />;
 };
 
-export default LineChart;
+function findCircleSize(price: number): number {
+
+    // var newPrice = price - 372.99
+    // var ratio = newPrice/10612
+    // return (10 * ratio)
+    if (price < 1200)
+    {
+        return 4
+    }
+    else if (price < 1800)
+    {
+        return 5
+    }
+    else if (price < 2400)
+    {
+        return 6
+    }
+    else if (price < 3000)
+    {
+        return 7
+    }
+    else if (price < 3600)
+    {
+        return 8
+    }
+    else if (price < 4200)
+    {
+        return 9
+    }
+    else 
+    {
+        return 10
+    }
+
+};
+
+export default ScatterPlot;

@@ -68,14 +68,20 @@ const LineChart = ({ width, height }) => {
                 .domain(release_year)
                 .padding(0.1);
             svg.append("g")
-                .attr("transform", `translate(0, ${innerHeight})`)
+                .attr("transform", `translate(0, ${innerHeight-20})`)
                 .call(d3.axisBottom(x))
                 .selectAll("text")
                     .style("fill", "black")
-            // .select(".domain").remove();
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("x", (innerWidth/2))
+                .attr("y", innerHeight + 18)
+                .style("font-size", "14px")
+                .style("fill", "black")
+                .text("Release year");
         
             const y = d3.scaleLinear()
-                .range([innerHeight, 0])
+                .range([innerHeight-20, 0])
                 .domain([1600, 2400])
             svg.append("g")
                 // .style("font-size", 12)
@@ -84,6 +90,14 @@ const LineChart = ({ width, height }) => {
                 .selectAll("text")
                     .style("fill", "black")
             .select(".domain").remove();
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                // .attr("x", 0)
+                // .attr("y", innerHeight/2)
+                .attr("transform", `translate(-45, ${innerHeight/2}) rotate(90)`)
+                .style("font-size", "14px")
+                .style("fill", "black")
+                .text("Price (in $)");
         
             // const [minValue, maxValue] = d3.extent(ratioData, d => d.value);
             const groupKeys = Array.from(brandGroup.keys())

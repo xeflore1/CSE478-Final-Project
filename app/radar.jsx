@@ -11,15 +11,16 @@ const RadarChart = ({ width, height }) => {
     const [selectedCat, setSelectedCat] = useState(null);
     const [dataset, setDataset] = useState(null)    
     const [categories, setCategories] = useState([])
-    const labels = ["device_type", "cpu_brand", "form_factor"]
-    const features = ["cpu_score", "gpu_score", "ram_score"]
-    const [selectedLabel, setSelectedLabel] = useState("device_type")
+    const labels = ["Computer Brand", "CPU Brand", "Desktop Form Factor", "Laptop Form Factor"]
+    const features = ["price", "gpu_score", "ram_score"]
+    const [selectedLabel, setSelectedLabel] = useState("Computer Brand")
+    const [attribute_lbl, setAttribute] = useState("");
 
     // Rendering
     useEffect(() => {
         const container = ref.current;
         
-        if (!container || !width || !height || !dataset) return;
+        if (!container || !width || !height || !dataset || attribute_lbl === "") return;
         // Init scale 
         const centerX = width/2;
         const centerY = height/2;
@@ -37,7 +38,7 @@ const RadarChart = ({ width, height }) => {
                 "name": f,
                 "angle": angle,
                 "line_coord": angleToCoordinate(angle, 1),
-                "label_coord": angleToCoordinate(angle, 1.15)
+                "label_coord": angleToCoordinate(angle, 1.05)
             }
         });
 
@@ -78,33 +79,37 @@ const RadarChart = ({ width, height }) => {
             .data(featureData)
             .join(
                 enter => enter.append("text")
-                    .attr("x", d => d.label_coord.x - 32)
+                    .attr("class", "axislabel")
+                    .attr("x", d => d.label_coord.x - 20)
                     .attr("y", d => d.label_coord.y + 10)
-                    .text(d => d.name)
+                    .text(d => d.name),
+                update => update,
+                exit => exit.remove() // proper exit handler
             )
-
+            
         let line = d3.line()
             .x(d => d.x)
             .y(d => d.y);
 
         // Draw the path element
-        svg.selectAll(".radar_path")
-            .data(dataset.slice(0,3))
+        svg.selectAll("path")
+            .data(dataset)
             .join(
                 enter => enter.append("path")
-                    .attr("class", "radar_path")
+                    // .attr("class", "radar_path")
                     .attr("stroke-width", 3)
-                    .attr("stroke", (d, i) => { console.log(d) 
-                        return color(d[selectedLabel])})
-                    .attr("fill", (d, i) => {return color(d[selectedLabel])})
+                    .attr("stroke", (d, i) => { return color(d[attribute_lbl])})
+                    .attr("fill", (d, i) => {return color(d[attribute_lbl])})
                     .attr("stroke-opacity", 1)
                     .datum(d => getPathCoordinates(d))
                     .attr("d", line)
                     .attr("opacity", 0.25),
                 update => {
                     update
-                        .attr("stroke", d => color(d[selectedLabel]))
-                        .attr("fill",  d => color(d[selectedLabel]))
+                        .attr("stroke", d => color(d[attribute_lbl]))
+                        .attr("fill",  d => color(d[attribute_lbl]))
+                        .datum(d => getPathCoordinates(d))
+                        .attr("d", line)
                         // .datum(d => getPathCoordinates(d))  // recalc coordinates for updated data
                         // .attr("d", line)
                 },
@@ -116,16 +121,38 @@ const RadarChart = ({ width, height }) => {
         // paths = scatter_svg.selectAll("path").data(dataset);
         // console.log(paths)
     // Re-run this effect whenever width or height changes
-    }, [width, height, dataset, selectedLabel]);
+    }, [width, height, dataset, attribute_lbl]);
 
     useEffect(() => {
-        d3.csv("/radar_scaled_data.csv").then(function(data) {
-            if (!dataset) setDataset(data);
-            const set = new Set(d3.map(data, (d) => d[selectedLabel]))
-            setCategories([...set])
-         })
-        // console.log(dataset["categories"])
-    }, [dataset, selectedLabel])
+        let url = "radar_dataset/";
+        switch (selectedLabel) {
+            case "Computer Brand":
+                url = url + "brand_radar.csv";
+                setAttribute("brand")
+                break;
+            case "CPU Brand":
+                url = url + "cpu_radar.csv";
+                setAttribute("cpu_brand")
+                break;
+            case "Desktop Form Factor":
+                url = url + "desk_ff_radar.csv";
+                setAttribute("form_factor")
+                break;
+            case "Laptop Form Factor":
+                url = url + "lap_ff_radar.csv";
+                setAttribute("form_factor")
+                break;
+        }
+        if (url === "radar_dataset/") {
+            console.log(`Invalid dataset label: ${url}`);
+            return;
+        }
+        d3.csv(url).then(function(data) {
+            setDataset(data);
+            const attributes = d3.map(data, (d) => d[attribute_lbl])
+            setCategories([...attributes])
+         });
+    }, [selectedLabel, attribute_lbl])
 
     const CategoryEventHandler = (category) => {
         setSelectedCat(category);

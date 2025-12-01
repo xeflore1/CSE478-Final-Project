@@ -84,9 +84,11 @@ const HeatMap = ({ width, height }) => {
                 .text("Form Factor");
         
             const [minValue, maxValue] = d3.extent(ratioData, d => d.value);
+            console.log("min" + minValue)
+            console.log("max" + maxValue)
             const myColor = d3.scaleSequential()
                 .interpolator(d3.interpolateRdBu)
-                .domain([minValue, maxValue]);
+                .domain([maxValue, minValue]);
             
             // Tooltip 
             const tooltip = d3.select(container).append("div")

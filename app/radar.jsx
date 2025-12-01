@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import path from 'path';
 
 // Accept width and height as props
 const RadarChart = ({ width, height }) => {
@@ -7,19 +8,18 @@ const RadarChart = ({ width, height }) => {
 
     const color = d3.scaleOrdinal(d3.schemeCategory10);
     const [runOne, setRunOne] = useState(false)
-    const [dataset, setDataset] = useState(null)
+    const [selectedCat, setSelectedCat] = useState(null);
+    const [dataset, setDataset] = useState(null)    
+    const [categories, setCategories] = useState([])
+    const labels = ["device_type", "cpu_brand", "form_factor"]
+    const features = ["cpu_score", "gpu_score", "ram_score"]
     const [selectedLabel, setSelectedLabel] = useState("device_type")
 
+    // Rendering
     useEffect(() => {
         const container = ref.current;
         
         if (!container || !width || !height || !dataset) return;
-
-        if (runOne) return;
-        console.log(width)
-        console.log(height)
-
-        setRunOne(true);
         // Init scale 
         const centerX = width/2;
         const centerY = height/2;
@@ -29,10 +29,8 @@ const RadarChart = ({ width, height }) => {
         function angleToCoordinate(angle, value){
             let x = Math.cos(angle) * radialScale(value);
             let y = Math.sin(angle) * radialScale(value);
-            console.log(maxRadius)
             return {"x": centerX + x, "y": centerY - y};
         }
-        const features = dataset["features"]
         let featureData = features.map((f, i) => {
             let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
             return {
@@ -54,20 +52,13 @@ const RadarChart = ({ width, height }) => {
             return coordinates;
         }
 
-        // Clear previous drawing
-        d3.select(container).selectAll("*").remove();
-
         const margin = {top: 50, right: 30, bottom: 30, left: 0};
         
-        const innerWidth = width - margin.left - margin.right;
-        const innerHeight = height - margin.top - margin.bottom;
-        
         const svg = d3.select(container)
-            .append("svg")
             .attr("class", "radar-chart")
             .attr("width", width)
             .attr("height", height)
-            .append("g")
+            // .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
         
         // Draw axis fine
@@ -97,53 +88,64 @@ const RadarChart = ({ width, height }) => {
             .y(d => d.y);
 
         // Draw the path element
-        svg.selectAll("path")
-            .data(dataset.slice(0,50))
+        svg.selectAll(".radar_path")
+            .data(dataset.slice(0,3))
             .join(
                 enter => enter.append("path")
+                    .attr("class", "radar_path")
+                    .attr("stroke-width", 3)
+                    .attr("stroke", (d, i) => { console.log(d) 
+                        return color(d[selectedLabel])})
+                    .attr("fill", (d, i) => {return color(d[selectedLabel])})
+                    .attr("stroke-opacity", 1)
                     .datum(d => getPathCoordinates(d))
                     .attr("d", line)
-                    .attr("stroke-width", 3)
-                    .attr("stroke", (d, i) => color(d.device_type))
-                    .attr("fill", (d, i) => color(d.device_type))
-                    .attr("stroke-opacity", 1)
-                    .attr("opacity", 0.25)
-            )
-            .on("mouseover", function (d, i) {
-            d3.select(this).transition()
-                .attr("opacity", 0.5)
-            })
-            .on("mouseout", function (d, i) {
-                d3.select(this).transition()
-                .attr("opacity", 0.25)
-            });
+                    .attr("opacity", 0.25),
+                update => {
+                    update
+                        .attr("stroke", d => color(d[selectedLabel]))
+                        .attr("fill",  d => color(d[selectedLabel]))
+                        // .datum(d => getPathCoordinates(d))  // recalc coordinates for updated data
+                        // .attr("d", line)
+                },
+                exit => exit.remove() // proper exit handler
+            );
+        
+        
+
+        // paths = scatter_svg.selectAll("path").data(dataset);
+        // console.log(paths)
     // Re-run this effect whenever width or height changes
-    }, [width, height, dataset]);
+    }, [width, height, dataset, selectedLabel]);
 
     useEffect(() => {
-         d3.csv("/radar_scaled_data.csv").then(function(data: any) {
-            data["labels"] = ["device_type", "cpu_brand", "form_factor"]
-            data["features"] = ["cpu_score", "gpu_score", "ram_score"]
+        d3.csv("/radar_scaled_data.csv").then(function(data) {
+            if (!dataset) setDataset(data);
             const set = new Set(d3.map(data, (d) => d[selectedLabel]))
-            data["categories"] = [...set]
-            setDataset(data);
+            setCategories([...set])
          })
-        console.log(selectedLabel)
         // console.log(dataset["categories"])
     }, [dataset, selectedLabel])
 
+    const CategoryEventHandler = (category) => {
+        setSelectedCat(category);
+        const svg = d3.select(ref.current);
+        svg.selectAll(".radar_path")
+            .attr("opacity", 0.85)
+    }    
+
     return (
         <div className="flex w-full h-[500px]">
-            <div ref={ref} className="relative" />
+            <svg ref={ref} className="absolute" />
             <div className="absolute flex-col h-full w-full flex items-end justify-center space-y-2 px-4">
-                {dataset && dataset["categories"].map((feature, idx) => (
+                {dataset && categories.map((feature, idx) => (
                 <button key={idx} className="z-20 h-8 px-3 bg-gray-800 text-white text-xs rounded cursor-pointer">
                     {feature}
                 </button>
                 ))}
             </div>
                 <div className="absolute h-full w-full flex items-end py-2 justify-center space-x-8 px-4">
-                {dataset && dataset["labels"].map((feature, idx) => (
+                {dataset && labels.map((feature, idx) => (
                 <button key={idx} onClick={() => setSelectedLabel(feature)} className="h-8 px-12 bg-gray-800 text-white text-xs rounded cursor-pointer">
                     {feature}
                 </button>

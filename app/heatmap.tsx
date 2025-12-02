@@ -1,7 +1,6 @@
+// "use client"
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-
-// Accept width and height as props
 const HeatMap = ({ width, height }) => {
     const ref = useRef(null);
 
@@ -13,7 +12,7 @@ const HeatMap = ({ width, height }) => {
         // Clear previous drawing
         d3.select(container).selectAll("*").remove();
 
-        const margin = {top: 40, right: 30, bottom: 30, left: 60};
+        const margin = {top: 60, right: 100, bottom: 50, left: 100};
         
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
@@ -52,19 +51,24 @@ const HeatMap = ({ width, height }) => {
                 .range([0, innerWidth])
                 .domain(brands)
                 .padding(0.05);
-
             svg.append("g")
                 .attr("transform", `translate(0, ${innerHeight})`)
                 .call(d3.axisBottom(x).tickSize(0))
                 .selectAll("text")
                     .style("fill", "black")
             .select(".domain").remove();
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("x", innerWidth/2)
+                .attr("y", innerHeight + margin.bottom-15)
+                .style("font-size", "14px")
+                .style("fill", "black")
+                .text("Brand");
         
             const y = d3.scaleBand()
                 .range([innerHeight, 0])
                 .domain(form_factor)
                 .padding(0.05);
-
             svg.append("g")
                 .style("font-size", 12)
                 .style("fill", "black")
@@ -72,11 +76,19 @@ const HeatMap = ({ width, height }) => {
                 .selectAll("text")
                     .style("fill", "black")
             .select(".domain").remove();
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("transform", `translate(-75, ${innerHeight/2}) rotate(90)`)
+                .style("font-size", "14px")
+                .style("fill", "black")
+                .text("Form Factor");
         
             const [minValue, maxValue] = d3.extent(ratioData, d => d.value);
+            console.log("min" + minValue)
+            console.log("max" + maxValue)
             const myColor = d3.scaleSequential()
                 .interpolator(d3.interpolateRdBu)
-                .domain([minValue, maxValue]);
+                .domain([maxValue, minValue]);
             
             // Tooltip 
             const tooltip = d3.select(container).append("div")
@@ -128,6 +140,7 @@ const HeatMap = ({ width, height }) => {
                 .style("font-size", "14px")
                 .style("fill", "black")
                 .text("Price Distribution");
+              
         });
 
     // Re-run this effect whenever width or height changes

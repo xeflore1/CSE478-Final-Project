@@ -36,19 +36,13 @@ const LineChart = ({ width, height }) => {
             const price = Array.from(new Set(dataSubset.map(d => d.price))); // Y axis
             const brandGroup = d3.group(dataSubset, d => d.brand)
 
-            console.log("min: " + Math.min(...release_year))
-
-            // console.log(release_year)
-            // console.log(price)
-            // console.log(brandGroup)
             const grouped = d3.rollup(
                 dataSubset,  
                 v => d3.mean(v, d => +d.price),
                 d => d.brand,
                 d => d.release_year
             );
-            console.log("grouped")
-            console.log(grouped)
+
 
             const formattedData = Array.from(grouped, ([brand, yearMap]) => {
                 // Convert the inner Year Map into an array and SORT it
@@ -74,14 +68,20 @@ const LineChart = ({ width, height }) => {
                 .domain(release_year)
                 .padding(0.1);
             svg.append("g")
-                .attr("transform", `translate(0, ${innerHeight})`)
+                .attr("transform", `translate(0, ${innerHeight-20})`)
                 .call(d3.axisBottom(x))
                 .selectAll("text")
                     .style("fill", "black")
-            // .select(".domain").remove();
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("x", (innerWidth/2))
+                .attr("y", innerHeight + 18)
+                .style("font-size", "14px")
+                .style("fill", "black")
+                .text("Release year");
         
             const y = d3.scaleLinear()
-                .range([innerHeight, 0])
+                .range([innerHeight-20, 0])
                 .domain([1600, 2400])
             svg.append("g")
                 // .style("font-size", 12)
@@ -90,6 +90,14 @@ const LineChart = ({ width, height }) => {
                 .selectAll("text")
                     .style("fill", "black")
             .select(".domain").remove();
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                // .attr("x", 0)
+                // .attr("y", innerHeight/2)
+                .attr("transform", `translate(-45, ${innerHeight/2}) rotate(90)`)
+                .style("font-size", "14px")
+                .style("fill", "black")
+                .text("Price (in $)");
         
             // const [minValue, maxValue] = d3.extent(ratioData, d => d.value);
             const groupKeys = Array.from(brandGroup.keys())
@@ -123,23 +131,19 @@ const LineChart = ({ width, height }) => {
             //     tooltip.style("opacity", 0);
             //     d3.select(this).style("stroke", "none").style("opacity", 0.8);
             // }
-            console.log("formatted data")
-            console.log(formattedData) 
+
             svg.selectAll(".line")
                 .data(formattedData)
                 .join("path")
                     .attr("fill", "none")
                     .attr("stroke", function(d) { 
-                        console.log("brand: " + d.brand)
                         return myColor(d.brand)})
                     .attr("stroke-width", 1.5)
                     .attr("d", function(d){
                         return d3.line()
                             .x(function(d) { 
-                                console.log("year: " + d.release_year)
                                 return x(d.release_year); })
                             .y(function(d) { 
-                                console.log("value: " + d.value)
                                 return y(d.value); })
                             (d.values)
                     })

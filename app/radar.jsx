@@ -98,7 +98,25 @@ const RadarChart = ({ width, height }) => {
                 enter => {
                     const g = enter.append("g")
                         .attr("class", "triangle")
-                    
+                               
+                    g.selectAll("text.node-label")
+                        .data(d => {
+                            if (d[attribute_lbl] === selectedCat){
+                                return getPathCoordinates(d).map(p => ({
+                                    ...p,
+                                    raw: d
+                                }))
+                            } else return [];
+                        })
+                        .join("text")
+                        .attr("class", "node-label")
+                        .attr("x", p => p.x + 8)
+                        .attr("y", p => p.y + 3)
+                        .attr("font-size", 32)
+                        .style("opacity", 1)
+                        // .attr("fill", p => color(p.raw[attribute_lbl]))
+                        .text((p,i) => d3.format(".2f")(p.raw[features[i]]));
+
                     g.append("path")
                         // .attr("class", "radar_path")
                         .attr("fill", (d, i) => {return color(d[attribute_lbl])})
@@ -130,6 +148,25 @@ const RadarChart = ({ width, height }) => {
                         });
                 },
                 update => {
+
+                    update.selectAll("text.node-label")
+                        .data(d => {
+                            if (d[attribute_lbl] === selectedCat){
+                                return getPathCoordinates(d).map(p => ({
+                                    ...p,
+                                    raw: d
+                                }))
+                            } else return [];
+                        })
+                        .join("text")
+                        .attr("class", "node-label")
+                        .attr("x", p => p.x + 8)
+                        .attr("y", p => p.y + 3)
+                        .attr("font-size", 32)
+                        .style("opacity", 1)
+                        // .attr("fill", p => color(p.raw[attribute_lbl]))
+                        .text((p,i) => d3.format(".2f")(p.raw[features[i]]));
+
                     update.select("path")
                         .attr("fill",  d => color(d[attribute_lbl]))
                         .attr("stroke", d => color(d[attribute_lbl]))
@@ -139,8 +176,8 @@ const RadarChart = ({ width, height }) => {
                                 return 0.70;
                             } else return 0.25;
                         })
-                        .datum(d => getPathCoordinates(d))
-                        .attr("d", line)
+                        .attr("d", d => line(getPathCoordinates(d)));
+
 
                     update.selectAll("circle.node")
                         .data(d =>
@@ -164,8 +201,8 @@ const RadarChart = ({ width, height }) => {
                                 return 1;
                             } else return 0.50;
                         });
-                    // updated.filter(d => d[attribute_lbl] === selectedCat)
-                    //     .raise()
+                    
+                    
                 },
                 exit => exit
                     .remove() // proper exit handler

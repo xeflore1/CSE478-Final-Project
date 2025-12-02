@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import path from 'path';
 
 // Accept width and height as props
 const RadarChart = ({ width, height }) => {
@@ -12,7 +11,7 @@ const RadarChart = ({ width, height }) => {
     const [dataset, setDataset] = useState(null)    
     const [categories, setCategories] = useState([])
     const labels = ["Computer Brand", "CPU Brand", "Desktop Form Factor", "Laptop Form Factor"]
-    const features = ["price", "gpu_score", "ram_score"]
+    const features = ["price", "gpu_score", "cpu_score"]
     const [selectedLabel, setSelectedLabel] = useState("Computer Brand")
     const [attribute_lbl, setAttribute] = useState("");
 
@@ -89,7 +88,8 @@ const RadarChart = ({ width, height }) => {
             
         let line = d3.line()
             .x(d => d.x)
-            .y(d => d.y);
+            .y(d => d.y)
+            .curve(d3.curveLinearClosed);
 
         // Draw the path element
         svg.selectAll("path")
@@ -97,23 +97,30 @@ const RadarChart = ({ width, height }) => {
             .join(
                 enter => enter.append("path")
                     // .attr("class", "radar_path")
-                    .attr("stroke-width", 3)
-                    .attr("stroke", (d, i) => { return color(d[attribute_lbl])})
                     .attr("fill", (d, i) => {return color(d[attribute_lbl])})
+                    .attr("stroke", (d) => color(d[attribute_lbl]))
                     .attr("stroke-opacity", 1)
+                    .attr("stroke-width", 1)
+                    .attr("fill-opacity", 0.25)
                     .datum(d => getPathCoordinates(d))
-                    .attr("d", line)
-                    .attr("opacity", 0.25),
+                    .attr("d", line),
                 update => {
-                    update
-                        .attr("stroke", d => color(d[attribute_lbl]))
+                    const updated = update
                         .attr("fill",  d => color(d[attribute_lbl]))
+                        .attr("stroke", d => color(d[attribute_lbl]))
+                        .attr("stroke-opacity", 1)
+                        .attr("fill-opacity", (d) => {
+                            if (d[attribute_lbl] === selectedCat){
+                                return 0.75;
+                            } else return 0.25;
+                        })
                         .datum(d => getPathCoordinates(d))
                         .attr("d", line)
-                        // .datum(d => getPathCoordinates(d))  // recalc coordinates for updated data
-                        // .attr("d", line)
+                    updated.filter(d => d[attribute_lbl] === selectedCat)
+                        .raise()
                 },
-                exit => exit.remove() // proper exit handler
+                exit => exit
+                    .remove() // proper exit handler
             );
         
         
@@ -121,7 +128,7 @@ const RadarChart = ({ width, height }) => {
         // paths = scatter_svg.selectAll("path").data(dataset);
         // console.log(paths)
     // Re-run this effect whenever width or height changes
-    }, [width, height, dataset, attribute_lbl]);
+    }, [width, height, dataset, attribute_lbl, selectedCat]);
 
     useEffect(() => {
         let url = "radar_dataset/";
@@ -154,23 +161,17 @@ const RadarChart = ({ width, height }) => {
          });
     }, [selectedLabel, attribute_lbl])
 
-    const CategoryEventHandler = (category) => {
-        setSelectedCat(category);
-        const svg = d3.select(ref.current);
-        svg.selectAll(".radar_path")
-            .attr("opacity", 0.85)
-    }    
-
     const CategoryButton = (category, idx) => {
+        const color_code = d3.color(color(category)).formatHex();
         if (selectedCat === category){
             return (
-                <button key={idx} onClick={() => setSelectedCat(null)} className="z-20 h-8 px-3 bg-gray-800 opacity-70 text-white text-xs rounded cursor-pointer">
+                <button key={idx} onClick={() => setSelectedCat(null)} style={{ backgroundColor: color_code }} className={`z-20 h-8 px-3 opacity-70 text-white text-xs rounded cursor-pointer`}>
                     {category}
                 </button>
             )
         } else {
             return (
-                <button key={idx} onClick={() => setSelectedCat(category)} className="z-20 h-8 px-3 bg-gray-800 text-white text-xs rounded cursor-pointer">
+                <button key={idx} onClick={() => setSelectedCat(category)} style={{ backgroundColor: color_code }} className={`z-20 h-8 px-3 text-white text-xs rounded cursor-pointer`}>
                     {category}
                 </button>
             )

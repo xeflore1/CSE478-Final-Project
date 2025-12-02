@@ -161,21 +161,49 @@ const RadarChart = ({ width, height }) => {
             .attr("opacity", 0.85)
     }    
 
+    const CategoryButton = (category, idx) => {
+        if (selectedCat === category){
+            return (
+                <button key={idx} onClick={() => setSelectedCat(null)} className="z-20 h-8 px-3 bg-gray-800 opacity-70 text-white text-xs rounded cursor-pointer">
+                    {category}
+                </button>
+            )
+        } else {
+            return (
+                <button key={idx} onClick={() => setSelectedCat(category)} className="z-20 h-8 px-3 bg-gray-800 text-white text-xs rounded cursor-pointer">
+                    {category}
+                </button>
+            )
+        }
+    }
+
+    const AttributeButton = (label, idx) => {
+        if (selectedLabel === label){
+            return (
+                <button key={idx} className="h-8 px-12 bg-gray-800 opacity-70 text-white text-xs rounded cursor-pointer">
+                    {label}
+                </button>
+            )
+        } else {
+            return (
+                <button key={idx} onClick={() => setSelectedLabel(label)} className="h-8 px-12 bg-gray-800 text-white text-xs rounded cursor-pointer">
+                    {label}
+                </button>
+            )
+        }
+    }
+ 
     return (
         <div className="flex w-full h-[500px]">
             <svg ref={ref} className="absolute" />
             <div className="absolute flex-col h-full w-full flex items-end justify-center space-y-2 px-4">
                 {dataset && categories.map((feature, idx) => (
-                <button key={idx} className="z-20 h-8 px-3 bg-gray-800 text-white text-xs rounded cursor-pointer">
-                    {feature}
-                </button>
+                    CategoryButton(feature, idx)
                 ))}
             </div>
                 <div className="absolute h-full w-full flex items-end py-2 justify-center space-x-8 px-4">
                 {dataset && labels.map((feature, idx) => (
-                <button key={idx} onClick={() => setSelectedLabel(feature)} className="h-8 px-12 bg-gray-800 text-white text-xs rounded cursor-pointer">
-                    {feature}
-                </button>
+                    AttributeButton(feature, idx)
                 ))}
             </div>
         </div>

@@ -92,41 +92,85 @@ const RadarChart = ({ width, height }) => {
             .curve(d3.curveLinearClosed);
 
         // Draw the path element
-        svg.selectAll("path")
+        svg.selectAll("g.triangle")
             .data(dataset)
             .join(
-                enter => enter.append("path")
-                    // .attr("class", "radar_path")
-                    .attr("fill", (d, i) => {return color(d[attribute_lbl])})
-                    .attr("stroke", (d) => color(d[attribute_lbl]))
-                    .attr("stroke-opacity", 1)
-                    .attr("stroke-width", 1)
-                    .attr("fill-opacity", 0.25)
-                    .datum(d => getPathCoordinates(d))
-                    .attr("d", line),
+                enter => {
+                    const g = enter.append("g")
+                        .attr("class", "triangle")
+                    
+                    g.append("path")
+                        // .attr("class", "radar_path")
+                        .attr("fill", (d, i) => {return color(d[attribute_lbl])})
+                        .attr("stroke", (d) => color(d[attribute_lbl]))
+                        .attr("stroke-opacity", 1)
+                        .attr("stroke-width", 1)
+                        .attr("fill-opacity", 0.25)
+                        .attr("d", d => line(getPathCoordinates(d)));
+
+
+                    g.selectAll("circle.node")
+                        .data(d =>
+                            // 3 coords + carry category for color
+                            getPathCoordinates(d).map(p => ({
+                                ...p,
+                                category: d[attribute_lbl]
+                            }))
+                        )
+                        .join("circle")
+                        .attr("class", "node")
+                        .attr("cx", p => p.x)
+                        .attr("cy", p => p.y)
+                        .attr("r", 5)
+                        .attr("fill", p => color(p.category))
+                        .attr("fill-opacity", (p) => {
+                            if (p.category === selectedCat){
+                                return 1;
+                            } else return 0.50;
+                        });
+                },
                 update => {
-                    const updated = update
+                    update.select("path")
                         .attr("fill",  d => color(d[attribute_lbl]))
                         .attr("stroke", d => color(d[attribute_lbl]))
                         .attr("stroke-opacity", 1)
                         .attr("fill-opacity", (d) => {
                             if (d[attribute_lbl] === selectedCat){
-                                return 0.75;
+                                return 0.70;
                             } else return 0.25;
                         })
                         .datum(d => getPathCoordinates(d))
                         .attr("d", line)
-                    updated.filter(d => d[attribute_lbl] === selectedCat)
-                        .raise()
+
+                    update.selectAll("circle.node")
+                        .data(d =>
+                        getPathCoordinates(d).map(p => ({
+                            ...p,
+                            category: d[attribute_lbl]
+                        }))
+                        )
+                        .join(
+                        enter => enter.append("circle")
+                            .attr("class", "node")
+                            .attr("r", 5),
+                        update => update,
+                        exit => exit.remove()
+                        )
+                        .attr("cx", p => p.x)
+                        .attr("cy", p => p.y)
+                        .attr("fill", p => color(p.category))
+                        .attr("fill-opacity", (p) => {
+                            if (p.category === selectedCat){
+                                return 1;
+                            } else return 0.50;
+                        });
+                    // updated.filter(d => d[attribute_lbl] === selectedCat)
+                    //     .raise()
                 },
                 exit => exit
                     .remove() // proper exit handler
             );
         
-        
-
-        // paths = scatter_svg.selectAll("path").data(dataset);
-        // console.log(paths)
     // Re-run this effect whenever width or height changes
     }, [width, height, dataset, attribute_lbl, selectedCat]);
 

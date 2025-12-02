@@ -91,6 +91,8 @@ const RadarChart = ({ width, height }) => {
             .y(d => d.y)
             .curve(d3.curveLinearClosed);
 
+        const font_size = 24
+
         // Draw the path element
         svg.selectAll("g.triangle")
             .data(dataset)
@@ -112,7 +114,7 @@ const RadarChart = ({ width, height }) => {
                         .attr("class", "node-label")
                         .attr("x", p => p.x + 8)
                         .attr("y", p => p.y + 3)
-                        .attr("font-size", 32)
+                        .attr("font-size", font_size)
                         .style("opacity", 1)
                         // .attr("fill", p => color(p.raw[attribute_lbl]))
                         .text((p,i) => d3.format(".2f")(p.raw[features[i]]));
@@ -162,7 +164,7 @@ const RadarChart = ({ width, height }) => {
                         .attr("class", "node-label")
                         .attr("x", p => p.x + 8)
                         .attr("y", p => p.y + 3)
-                        .attr("font-size", 32)
+                        .attr("font-size", font_size)
                         .style("opacity", 1)
                         // .attr("fill", p => color(p.raw[attribute_lbl]))
                         .text((p,i) => d3.format(".2f")(p.raw[features[i]]));

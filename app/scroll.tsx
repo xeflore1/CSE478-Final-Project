@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Scrollama, Step } from 'react-scrollama';
 import HeatMap from './heatmap';
 import RadarChart from './radar';
+import LineChart from './linechart';
+import ScatterPlot from './scatterplot';
 
 // This hook sets the dimensions of the current div
 const useResizeObserver = (ref) => {
@@ -41,15 +43,26 @@ const GraphStep = ({ index, currentStepIndex }) => {
                     ${currentStepIndex === index ? 'opacity-100 scale-100' : 'opacity-40 scale-95'}
                     `}
                 >
-                    {/* Only render HeatMap if we have dimensions */}
+                    {(dimensions && index === 0) && (
+                        <LineChart 
+                            width={dimensions.width} 
+                            height={dimensions.height} 
+                        />
+                    )}
+                    {(dimensions && index === 1) && (
+                        <HeatMap 
+                            width={dimensions.width} 
+                            height={dimensions.height} 
+                        />
+                    )}
                     {(dimensions && index === 2) && (
-                        <RadarChart 
+                        <ScatterPlot 
                             width={dimensions.width} 
                             height={dimensions.height} 
                         />
                     )}
                     {(dimensions && index === 3) && (
-                        <HeatMap 
+                        <RadarChart 
                             width={dimensions.width} 
                             height={dimensions.height} 
                         />
@@ -67,16 +80,16 @@ const GraphStep = ({ index, currentStepIndex }) => {
                 ${currentStepIndex === index ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}
                 `}>
                     {index === 0 && (
-                        <p className='text-black'>Insert Description.</p>
+                        <p className='text-black'>Line chart.</p>
                     )}
                     {index === 1 && (
-                        <p className='text-black'>Insert Description.</p>
+                        <p className='text-black'>Heat map</p>
                     )}
                     {index === 2 && (
-                        <p className='text-black'>Insert Description.</p>
+                        <p className='text-black'>Scatter plot</p>
                     )}
                     {index === 3 && (
-                        <p className='text-black'>Heat map description.</p>
+                        <p className='text-black'>Insert Description.</p>
                     )}
                     {index === 4 && (
                         <p className='text-black'>Insert Description.</p>

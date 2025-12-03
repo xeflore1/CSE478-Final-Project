@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Scrollama, Step } from 'react-scrollama';
 import HeatMap from './heatmap';
+import RadarChart from './radar';
 import LineChart from './linechart';
 import ScatterPlot from './scatterplot';
 
@@ -48,7 +49,6 @@ const GraphStep = ({ index, currentStepIndex }) => {
                             height={dimensions.height} 
                         />
                     )}
-                    {/* Only render HeatMap if we have dimensions */}
                     {(dimensions && index === 1) && (
                         <HeatMap 
                             width={dimensions.width} 
@@ -57,6 +57,12 @@ const GraphStep = ({ index, currentStepIndex }) => {
                     )}
                     {(dimensions && index === 2) && (
                         <ScatterPlot 
+                            width={dimensions.width} 
+                            height={dimensions.height} 
+                        />
+                    )}
+                    {(dimensions && index === 3) && (
+                        <RadarChart 
                             width={dimensions.width} 
                             height={dimensions.height} 
                         />

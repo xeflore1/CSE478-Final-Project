@@ -108,7 +108,7 @@ const HeatMap = ({ width, height }) => {
             const mousemove = function(event, d) {
                 const [x, y] = d3.pointer(event, container);
                 tooltip
-                    .html(`Brand: ${d.brand}<br> Form: ${d.form_factor}`)
+                    .html(`Brand: ${d.brand}<br> Form: ${d.form_factor}<br> Avg. Price: $${d.value.toFixed(2)}`)
                     .style("fill", "black")
                     .style("left", (x + 10) + "px")
                     .style("top", (y + 10) + "px");

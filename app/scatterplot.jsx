@@ -27,8 +27,8 @@ const ScatterPlot = ({ width, height }) => {
         
         d3.csv("/tsne.csv").then(function(data) {
             
-            const dataSubset = data.slice(0, 3000)
-            const dataMap = data.slice(0,3000).map(d => ({
+            const dataSubset = data.slice(0, 50)
+            const dataMap = dataSubset.map(d => ({
                 dimX: +d.dimX,
                 dimY: +d.dimY,
                 price: +d.price,
@@ -38,40 +38,31 @@ const ScatterPlot = ({ width, height }) => {
 
             const sizeScale = d3.scaleLinear()
                 .domain(d3.extent(dataSubset, d => +d.cpu_cores))
-                .range([4, 10])
+                .range([10, 30])
 
-            console.log("test with 8: " + sizeScale(8))
-            console.log("test with 15: " + sizeScale(15))
             const filteredData = dataMap.filter(d => d.label !== "") // get rid of rows with no label
-            console.log(filteredData)
-            
-            // const dimX = Array.from(new Set(filteredData.map(d => d.dimX))).sort(); // X axis
-            // const dimY = Array.from(new Set(filteredData.map(d => d.dimY))); // Y axis
-            // const price = Array.from(new Set(filteredData.map(d => d.price))); // Y axis
             const chipGroup = d3.group(filteredData, d => d.label)
 
             const x = d3.scaleLinear()
                 .range([0, innerWidth - margin.left - margin.right])
                 .domain([-250, 250])
-            svg.append("g")
-                .attr("transform", `translate(0, ${innerHeight})`)
-                .call(d3.axisBottom(x))
-                .selectAll("text")
-                    .style("fill", "black")
+            // svg.append("g")
+            //     .attr("transform", `translate(0, ${innerHeight})`)
+            //     .call(d3.axisBottom(x))
+            //     .selectAll("text")
+            //         .style("fill", "black")
         
             const y = d3.scaleLinear()
                 .range([innerHeight, 0])
                 .domain([-250, 250])
-            svg.append("g")
-                .style("fill", "black")
-                .call(d3.axisLeft(y).tickSize(0))
-                .selectAll("text")
-                    .style("fill", "black")
-            .select(".domain").remove();
+            // svg.append("g")
+            //     .style("fill", "black")
+            //     .call(d3.axisLeft(y).tickSize(0))
+            //     .selectAll("text")
+            //         .style("fill", "black")
+            //     .select(".domain").remove();
         
             const groupKeys = Array.from(chipGroup.keys())
-            console.log("keys: ")
-            console.log(groupKeys)
             const myColor = d3.scaleOrdinal(d3.schemeCategory10 )
                 .domain(groupKeys);
             
@@ -104,10 +95,11 @@ const ScatterPlot = ({ width, height }) => {
             }
 
             // add circles for each mob
-            svg.selectAll("circle")
+            svg.selectAll("circle.node")
                 .data(filteredData, (d, i) => i)
                 .enter()
                 .append("circle")
+                    .attr("class", "node")
                     .attr("cx", function(d) { return x(d.dimX) } )  // center x coord
                     .attr("cy", function(d) { return y(d.dimY) }) // center y coord
                     .attr("r", function(d) { return sizeScale(d.cpu_cores) }) // radius
@@ -117,6 +109,17 @@ const ScatterPlot = ({ width, height }) => {
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave); 
             
+            // Avoid collision and overlapping
+            const simulation = d3.forceSimulation(filteredData)
+                .force("x", d3.forceX().x(d => x(d.dimX)))
+                .force("y", d3.forceY().y(d => y(d.dimY)))
+                .force("collision", d3.forceCollide().radius((d) => sizeScale(d.cpu_cores) + 1))
+                    .on("tick", () => {
+                        svg.selectAll(".node")
+                            .attr("cx", (d) => d.x)
+                            .attr("cy", (d) => d.y)
+                    })
+
             // Centered Title
             svg.append("text")
                 .attr("text-anchor", "middle")
@@ -124,7 +127,7 @@ const ScatterPlot = ({ width, height }) => {
                 .attr("y", -20)
                 .style("font-size", "14px")
                 .style("fill", "black")
-                .text("Scatter plot");
+                .text("CPU Similarity Chart");
 
             // Add one dot in the legend for each name.
             var size = 20

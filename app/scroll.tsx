@@ -4,6 +4,7 @@ import HeatMap from './heatmap';
 import RadarChart from './radar';
 import LineChart from './linechart';
 import ScatterPlot from './scatterplot';
+import BarChart from './barchart'; 
 
 // This hook sets the dimensions of the current div
 const useResizeObserver = (ref) => {
@@ -63,6 +64,12 @@ const GraphStep = ({ index, currentStepIndex }) => {
                     )}
                     {(dimensions && index === 3) && (
                         <RadarChart 
+                            width={dimensions.width} 
+                            height={dimensions.height} 
+                        />
+                    )}
+                    {(dimensions && index === 4) && (
+                        <BarChart 
                             width={dimensions.width} 
                             height={dimensions.height} 
                         />

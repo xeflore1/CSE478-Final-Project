@@ -274,7 +274,7 @@ const RadarChart = ({ width, height }) => {
             )
         } else {
             return (
-                <button key={idx} onClick={() => setSelectedLabel(label)} className="h-8 px-12 bg-gray-800 text-white text-xs rounded cursor-pointer">
+                <button key={idx} onClick={() => setSelectedLabel(label)} className="h-8 px-12 bg-gray-700 text-white text-xs rounded cursor-pointer">
                     {label}
                 </button>
             )
@@ -282,14 +282,14 @@ const RadarChart = ({ width, height }) => {
     }
  
     return (
-        <div className="flex w-full h-[500px] rounded-xl bg-gray-800 opacity-90">
+        <div className="flex w-full bg-gray-800 rounded-xl opacity-90">
             <svg ref={ref} className="absolute" />
             <div className="absolute flex-col h-full w-full flex items-end justify-center space-y-2 px-4">
                 {dataset && categories.map((feature, idx) => (
                     CategoryButton(feature, idx)
                 ))}
             </div>
-                <div className="absolute h-full w-full flex items-end py-2 justify-center space-x-8 px-4">
+                <div className="absolute h-full w-full flex  items-end py-2 justify-center space-x-8 px-4">
                 {dataset && labels.map((feature, idx) => (
                     AttributeButton(feature, idx)
                 ))}

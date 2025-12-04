@@ -27,14 +27,21 @@ const ScatterPlot = ({ width, height }) => {
         
         d3.csv("/tsne.csv").then(function(data) {
             
-            const dataSubset = data.slice(0, 50)
-            const dataMap = dataSubset.map(d => ({
-                dimX: +d.dimX,
-                dimY: +d.dimY,
-                price: +d.price,
-                label: d.label,
-                cpu_cores: +d.cpu_cores
-            }));
+            const dataSubset = data.slice(0, 200)
+            // const dataMap = dataSubset.map(d => ({
+            //     dimX: +d.dimX,
+            //     dimY: +d.dimY,
+            //     price: +d.price,
+            //     label: d.label,
+            //     cpu_cores: +d.cpu_cores,
+            //     cpu_base_ghz: +d.cpu_base_ghz,
+            //     cpu_boost_ghz: +d.cpu_boost_ghz,
+            //     cpu_threads: +d.cpu_threads,
+            //     cpu_score: +d.cpu_score,
+            //     cpu_model: +d.cpu_model
+            // }));
+
+            const dataMap = dataSubset;
 
             const sizeScale = d3.scaleLinear()
                 .domain(d3.extent(dataSubset, d => +d.cpu_cores))
@@ -45,7 +52,7 @@ const ScatterPlot = ({ width, height }) => {
 
             const x = d3.scaleLinear()
                 .range([0, innerWidth - margin.left - margin.right])
-                .domain([-250, 250])
+                .domain(d3.extent(dataMap, d => +d.dimX))
             // svg.append("g")
             //     .attr("transform", `translate(0, ${innerHeight})`)
             //     .call(d3.axisBottom(x))
@@ -54,7 +61,8 @@ const ScatterPlot = ({ width, height }) => {
         
             const y = d3.scaleLinear()
                 .range([innerHeight, 0])
-                .domain([-250, 250])
+                .domain(d3.extent(dataMap, d => +d.dimY))
+
             // svg.append("g")
             //     .style("fill", "black")
             //     .call(d3.axisLeft(y).tickSize(0))
@@ -84,7 +92,7 @@ const ScatterPlot = ({ width, height }) => {
             const mousemove = function(event, d) {
                 const [x, y] = d3.pointer(event, container);
                 tooltip
-                    .html(`label: ${d.label}<br> CPU cores: ${d.cpu_cores} <br> price: ${d.price}<br> DimX: ${d.dimX}<br> DimY: ${d.dimY}`)
+                    .html(`Model: ${d.cpu_model} <br> CPU cores: ${d.cpu_cores} <br> CPU Clock Speed: ${d.cpu_base_ghz} GHz <br> Price: ${d.price} <br> Overall point: ${d3.format(".2f")(d.cpu_score)}`)
                     .style("fill", "black")
                     .style("left", (x + 10) + "px")
                     .style("top", (y + 10) + "px");
@@ -94,31 +102,42 @@ const ScatterPlot = ({ width, height }) => {
                 d3.select(this).style("stroke", "none").style("opacity", 0.8);
             }
 
-            // add circles for each mob
-            svg.selectAll("circle.node")
+            const logo_radius = 25
+            svg.selectAll("image.node-logo")
                 .data(filteredData, (d, i) => i)
                 .enter()
-                .append("circle")
-                    .attr("class", "node")
-                    .attr("cx", function(d) { return x(d.dimX) } )  // center x coord
-                    .attr("cy", function(d) { return y(d.dimY) }) // center y coord
-                    .attr("r", function(d) { return sizeScale(d.cpu_cores) }) // radius
-                    .attr('fill', function(d) { return myColor(d.label) })
+                .append("image")
+                    .attr("class", "node-logo")
+                    .attr("href", d => {
+                        switch (d.label){
+                            case "Intel":
+                                return "intel.png";
+                            case "AMD":
+                                return "amd.png";
+                            case "Apple":
+                                return "apple.jpg"
+                        }
+                    })
+                    .attr("x", d => x(d.dimX) - logo_radius/2)
+                    .attr("y", d => y(d.dimY) - logo_radius/2)
+                    .attr("width", logo_radius)
+                    .attr("height", logo_radius)
                     .style("opacity", .75)
+                    .attr("preserveAspectRatio", "xMidYMid meet")
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave); 
-            
+                    .on("mouseleave", mouseleave);     
+
             // Avoid collision and overlapping
             const simulation = d3.forceSimulation(filteredData)
-                .force("x", d3.forceX().x(d => x(d.dimX)))
-                .force("y", d3.forceY().y(d => y(d.dimY)))
-                .force("collision", d3.forceCollide().radius((d) => sizeScale(d.cpu_cores) + 1))
-                    .on("tick", () => {
-                        svg.selectAll(".node")
-                            .attr("cx", (d) => d.x)
-                            .attr("cy", (d) => d.y)
-                    })
+                .force("x", d3.forceX(d => x(d.dimX)))
+                .force("y", d3.forceY(d => y(d.dimY)))
+                .force("collision", d3.forceCollide(logo_radius / 2 + 2))
+                .on("tick", () => {
+                    svg.selectAll("image.node-logo")
+                        .attr("x", d => d.x - logo_radius / 2)
+                        .attr("y", d => d.y - logo_radius / 2);
+                });
 
             // Centered Title
             svg.append("text")
@@ -130,28 +149,28 @@ const ScatterPlot = ({ width, height }) => {
                 .text("CPU Similarity Chart");
 
             // Add one dot in the legend for each name.
-            var size = 20
-            svg.selectAll("mydots")
-            .data(groupKeys)
-            .enter()
-            .append("rect")
-                .attr("x", innerWidth - margin.left - margin.right )
-                .attr("y", function(d,i){ return  i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
-                .attr("width", size)
-                .attr("height", size)
-                .style("fill", function(d){ return myColor(d)})
+            // var size = 20
+            // svg.selectAll("mydots")
+            // .data(groupKeys)
+            // .enter()
+            // .append("rect")
+            //     .attr("x", innerWidth - margin.left - margin.right )
+            //     .attr("y", function(d,i){ return  i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .attr("width", size)
+            //     .attr("height", size)
+            //     .style("fill", function(d){ return myColor(d)})
 
-            // Add one dot in the legend for each name.
-            svg.selectAll("mylabels")
-            .data(groupKeys)
-            .enter()
-            .append("text")
-                .attr("x", (innerWidth - margin.left - margin.right) + size*1.2)
-                .attr("y", function(d,i){ return  i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-                .style("fill", function(d){ return myColor(d)})
-                .text(function(d){ return d})
-                .attr("text-anchor", "left")
-                .style("alignment-baseline", "middle")
+            // // Add one dot in the legend for each name.
+            // svg.selectAll("mylabels")
+            // .data(groupKeys)
+            // .enter()
+            // .append("text")
+            //     .attr("x", (innerWidth - margin.left - margin.right) + size*1.2)
+            //     .attr("y", function(d,i){ return  i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .style("fill", function(d){ return myColor(d)})
+            //     .text(function(d){ return d})
+            //     .attr("text-anchor", "left")
+            //     .style("alignment-baseline", "middle")
         });
 
     // Re-run this effect whenever width or height changes

@@ -56,9 +56,48 @@ const ScatterPlot = ({ width, height }) => {
                 .domain(d3.extent(dataMap, d => +d.dimY))
         
             const groupKeys = Array.from(chipGroup.keys())
-            const myColor = d3.scaleOrdinal(d3.schemeCategory10 )
-                .domain(groupKeys);
-            
+
+
+            // Prepare axes for gridlines
+            svg.append("g")
+                .attr("class", "xAxis")
+                .call(d3.axisBottom(x))
+                .attr("transform", "translate(0," + height + ")")
+                .call(g => { 
+                    g.selectAll(".tick line").remove();
+                    g.selectAll("text").remove();
+                    g.selectAll(".domain").remove();
+                })
+            svg.append("g")
+                .attr("class", "yAxis")
+                .call(d3.axisLeft(y))
+                .call(g => { 
+                    g.selectAll(".tick line").remove();
+                    g.selectAll("text").remove();
+                    g.selectAll(".domain").remove();
+                })
+
+            // Draw Gridlines
+            d3.selectAll("g.yAxis g.tick")
+                .append("line")
+                .attr("class", "gridline")
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", width)
+                .attr("y2", 0)
+                .attr("stroke", "#9ca5aecf") // line color
+                .attr("stroke-dasharray","4") // make it dashed;;
+
+            d3.selectAll("g.xAxis g.tick")
+                .append("line")
+                .attr("class", "gridline")
+                .attr("x1", 0)
+                .attr("y1", -height -20)
+                .attr("x2", 0)
+                .attr("y2", 0)
+                .attr("stroke", "#9ca5aecf") // line color
+                .attr("stroke-dasharray","4") // make it dashed;
+
             // Tooltip 
             const tooltip = d3.select(container).append("div")
                 .style("opacity", 0)
@@ -159,7 +198,8 @@ const ScatterPlot = ({ width, height }) => {
                             .attr("y1", y(anchor.dimY))
                             .attr("x2", d => x(d.dimX))
                             .attr("y2", d => y(d.dimY))
-                            .attr("stroke", "black"),
+                            .attr("stroke", "white")
+                            .style("stroke-dasharray", ("3, 3")),
                         update => update
                             .attr("x1", x(anchor.dimX))
                             .attr("y1", y(anchor.dimY))
@@ -188,36 +228,12 @@ const ScatterPlot = ({ width, height }) => {
                 .style("font-size", "14px")
                 .style("fill", "white")
                 .text("CPU Similarity Chart");
-
-            // Add one dot in the legend for each name.
-            // var size = 20
-            // svg.selectAll("mydots")
-            // .data(groupKeys)
-            // .enter()
-            // .append("rect")
-            //     .attr("x", innerWidth - margin.left - margin.right )
-            //     .attr("y", function(d,i){ return  i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
-            //     .attr("width", size)
-            //     .attr("height", size)
-            //     .style("fill", function(d){ return myColor(d)})
-
-            // // Add one dot in the legend for each name.
-            // svg.selectAll("mylabels")
-            // .data(groupKeys)
-            // .enter()
-            // .append("text")
-            //     .attr("x", (innerWidth - margin.left - margin.right) + size*1.2)
-            //     .attr("y", function(d,i){ return  i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
-            //     .style("fill", function(d){ return myColor(d)})
-            //     .text(function(d){ return d})
-            //     .attr("text-anchor", "left")
-            //     .style("alignment-baseline", "middle")
         });
 
     // Re-run this effect whenever width or height changes
     }, [topK]);
 
-    return <div ref={ref} className="relative w-full h-full border border-white" />;
+    return <div ref={ref} className="relative w-full h-full bg-gray-800 rounded-2xl" />;
 };
 
 export default ScatterPlot;

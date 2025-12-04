@@ -45,8 +45,6 @@ const LineChart = ({ width, height }) => {
 
 
             const formattedData = Array.from(grouped, ([brand, yearMap]) => {
-                // Convert the inner Year Map into an array and SORT it
-                // (Sorting is critical for line charts, otherwise the line scribbles back and forth)
                 const values = Array.from(yearMap, ([year, avgPrice]) => ({
                     release_year: year,
                     value: avgPrice
@@ -63,6 +61,7 @@ const LineChart = ({ width, height }) => {
                 }
             }
 
+            // x axis
             const x = d3.scalePoint()
                 .range([0, innerWidth - margin.left - margin.right])
                 .domain(release_year)
@@ -70,8 +69,11 @@ const LineChart = ({ width, height }) => {
             svg.append("g")
                 .attr("transform", `translate(0, ${innerHeight-20})`)
                 .call(d3.axisBottom(x))
-                .selectAll("text")
-                    .style("fill", "black")
+                .call(g => {
+                    g.selectAll("text").style("fill", "black")
+                    g.selectAll(".tick line").style("stroke", "black")
+                    g.select(".domain").style("stroke", "black")
+                });
             svg.append("text")
                 .attr("text-anchor", "middle")
                 .attr("x", (innerWidth/2))
@@ -80,57 +82,56 @@ const LineChart = ({ width, height }) => {
                 .style("fill", "black")
                 .text("Release year");
         
+            // y axis
             const y = d3.scaleLinear()
                 .range([innerHeight-20, 0])
                 .domain([1600, 2400])
             svg.append("g")
-                // .style("font-size", 12)
                 .style("fill", "black")
                 .call(d3.axisLeft(y).tickSize(0))
-                .selectAll("text")
-                    .style("fill", "black")
-            .select(".domain").remove();
+                .call(g => {
+                    g.selectAll("text").style("fill", "black")
+                    g.selectAll(".tick line").style("stroke", "black")
+                    g.select(".domain").style("stroke", "black")
+                });
             svg.append("text")
                 .attr("text-anchor", "middle")
-                // .attr("x", 0)
-                // .attr("y", innerHeight/2)
                 .attr("transform", `translate(-45, ${innerHeight/2}) rotate(90)`)
                 .style("font-size", "14px")
                 .style("fill", "black")
                 .text("Price (in $)");
         
-            // const [minValue, maxValue] = d3.extent(ratioData, d => d.value);
             const groupKeys = Array.from(brandGroup.keys())
             const myColor = d3.scaleOrdinal(d3.schemeCategory10 )
                 .domain(groupKeys);
             
-            // // Tooltip 
-            // const tooltip = d3.select(container).append("div")
-            //     .style("opacity", 0)
-            //     .attr("class", "tooltip")
-            //     .style("background-color", "white")
-            //     .style("border", "solid")
-            //     .style("border-width", "2px")
-            //     .style("padding", "5px")
-            //     .style("color", "black")
-            //     .style("position", "absolute");
+            // Tooltip 
+            const tooltip = d3.select(container).append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "2px")
+                .style("padding", "5px")
+                .style("color", "black")
+                .style("position", "absolute");
 
-            // const mouseover = function(event, d) {
-            //     tooltip.style("opacity", 1);
-            //     d3.select(this).style("stroke", "black").style("opacity", 1);   
-            // }
-            // const mousemove = function(event, d) {
-            //     const [x, y] = d3.pointer(event, container);
-            //     tooltip
-            //         .html(`Brand: ${d.brand}<br> Form: ${d.form_factor}`)
-            //         .style("fill", "black")
-            //         .style("left", (x + 10) + "px")
-            //         .style("top", (y + 10) + "px");
-            // }
-            // const mouseleave = function(event, d) {
-            //     tooltip.style("opacity", 0);
-            //     d3.select(this).style("stroke", "none").style("opacity", 0.8);
-            // }
+            const mouseover = function(event, d) {
+                tooltip.style("opacity", 1);
+                d3.select(this).style("stroke", "black").style("opacity", 1);   
+            }
+            const mousemove = function(event, d) {
+                const [x, y] = d3.pointer(event, container);
+                tooltip
+                    .html(`release year: ${d.release_year}<br> Price: $${d.value.toFixed(2)}`)
+                    .style("fill", "black")
+                    .style("left", (x + 10) + "px")
+                    .style("top", (y + 10) + "px");
+            }
+            const mouseleave = function(event, d) {
+                tooltip.style("opacity", 0);
+                d3.select(this).style("stroke", "none").style("opacity", 0.8);
+            }
 
             svg.selectAll(".line")
                 .data(formattedData)
@@ -147,6 +148,28 @@ const LineChart = ({ width, height }) => {
                                 return y(d.value); })
                             (d.values)
                     })
+
+                    
+            const flatData = formattedData.flatMap(d => 
+                d.values.map(v => ({
+                    brand: d.brand,       
+                    release_year: v.release_year, 
+                    value: v.value        
+                }))
+            );
+            // add circles 
+            console.log("flatdata")
+            console.log(flatData)
+            svg.selectAll("circle")
+                .data(flatData)
+                .join("circle")
+                    .attr('fill', function(d) { return myColor(d.brand) })
+                    .attr("r", 3) // radius
+                    .attr("cx", function(d) { return x(d.release_year) } )  // center x coord
+                    .attr("cy", function(d) { return y(d.value) }) // center y coord
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave); 
             
             // Centered Title
             svg.append("text")

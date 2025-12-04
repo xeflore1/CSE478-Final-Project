@@ -280,7 +280,7 @@ const RadarChart = ({ width, height }) => {
     }
  
     return (
-        <div className="flex w-full h-[500px] border border-white">
+        <div className="flex w-full h-[500px] rounded-xl bg-gray-800 opacity-90">
             <svg ref={ref} className="absolute" />
             <div className="absolute flex-col h-full w-full flex items-end justify-center space-y-2 px-4">
                 {dataset && categories.map((feature, idx) => (

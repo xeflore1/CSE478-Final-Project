@@ -208,7 +208,7 @@ const LineChart = ({ width, height }) => {
     // Re-run this effect whenever width or height changes
     }, [width, height]);
 
-    return <div ref={ref} className="relative w-full h-full" />;
+    return <div ref={ref} className="relative w-full h-full bg-gray-800 rounded-lg opacity-90" />;
 };
 
 export default LineChart;

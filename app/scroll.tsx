@@ -33,7 +33,7 @@ const GraphStep = ({ index, currentStepIndex }) => {
     const dimensions = useResizeObserver(containerRef);
 
     return (
-        <div className='w-screen bg-[#00121f] overflow-x-hidden'>
+        <div className='w-screen bg-[#00121f] overflow-x-hidden no-scrollbar'>
             <div className={`flex w-screen h-[80vh] mb-20 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse' }`}>
                 
                 {/* Graph Section */}
@@ -231,7 +231,7 @@ const ScrollamaDemo = () => {
   };
 
   return (
-      <div className=" bg-white">
+      <div className=" bg-white overflow-x-hidden">
         <div className='relative h-screen bg-black '>
             {/* 1. Background Layer (Blurred & Positioned Behind) */}
             <div className="absolute inset-0 bg-[url('/bestbuy.png')] bg-cover bg-center blur-xs opacity-30"></div>

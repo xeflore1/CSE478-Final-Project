@@ -108,11 +108,11 @@ const GraphStep = ({ index, currentStepIndex }) => {
                                     <strong>The Saturation Effect</strong>
                                 </p>
                                 <p className='text-white text-;eft'>
-                                    The stacked bar chart shows the number of computers each brand has over the years.
+                                    - The stacked bar chart shows the number of computers each brand has over the years.
                                     Each bar represents the total amount of computers for that year, and each bar is split 
                                     into subgroups to represent the portion each brand takes up. 
                                     <br></br>
-                                    If scarcity drove prices up, we would expect to see fewer computers in recent years. 
+                                    - If scarcity drove prices up, we would expect to see fewer computers in recent years. 
                                     Instead, we see an explosion in volume. The number of available models peaked in 2023 and 2024 (It should be noted 2025 is not over yet, that may be in part why its amount is not near the peak of previous years.), 
                                     with brands like Lenovo and Dell flooding the market. Despite this massive saturation of options, which 
                                     usually drives prices down, the average costs (from the previous chart) kept climbing.
@@ -126,9 +126,9 @@ const GraphStep = ({ index, currentStepIndex }) => {
                                     <strong>Who charges for what?</strong>
                                 </p>
                                 <p className='text-white text-left'>
-                                    This series of interactive radar charts compares price, GPU score, and CPU score for different brands, CPU's, Desktops, and Laptops.
+                                    - This series of interactive radar charts compares price, GPU score, and CPU score for different brands, CPU's, Desktops, and Laptops.
                                     <br></br>
-                                    We can clearly see that <strong>specialization</strong> drives the highest price tags. 
+                                    - We can clearly see that <strong>specialization</strong> drives the highest price tags. 
                                     Apple commands the market lead by focusing on CPU-heavy workstations, 
                                     while Razer justifies its premium pricing through GPU-dominant gaming rigs. 
                                     Beyond brand identity, <strong>form factor</strong> plays a crucial role. 
@@ -140,14 +140,20 @@ const GraphStep = ({ index, currentStepIndex }) => {
                         {index === 3 && (
                             <div className='flex flex-col gap-y-2 bg-[#0a4abf] px-6 py-4 rounded-lg'>
                                 <p className='text-[#fff200] text-xl text-left'>
-                                    <strong>FINISH LATER</strong>
+                                    <strong>Better CPU Deals or not?</strong>
                                 </p>
                                 <p className='text-white text-left'>
                                     <br></br>
-                                    This visualization maps the "brain" of the computer. Using a clustering algorithm, we see that higher prices (represented by larger bubbles) 
-                                    are not randomly distributed. They congregate in specific high-performance clusters. While AMD and Intel chips are scattered across the 
+                                    - This visualization answers the question "Can we get a better CPU deal with better performance and cheaper price?". 
+                                    <br></br> 
+                                    - We applied a T-SNE algorithm on multiple CPU performance features, such as: CPU cores, CPU threads, CPU clock speed in GHz, and map high dimensional data into 2D space. 
+                                    <br></br>
+                                    - Although Apple and Intel dominate the market in quantities and peak performance. AMD chips tend to offer high performance with a very afforable deals. 
+                                    <br></br>
+                                    - Left click to see top 3 better and cheaper alternatives, Double left-clicks to exit.
+                                    {/* are not randomly distributed. They congregate in specific high-performance clusters. While AMD and Intel chips are scattered across the 
                                     spectrum offering both low/high-end options, Apple’s chips (Green) form tight, exclusive clusters. This indicates that specific 
-                                    processor models are a primary lever for dictating the final price tag.
+                                    processor models are a primary lever for dictating the final price tag. */}
                                 </p>
                             </div>
                         )}
@@ -157,12 +163,12 @@ const GraphStep = ({ index, currentStepIndex }) => {
                                     <strong>The Premium Matrix</strong>
                                 </p>
                                 <p className='text-white text-left'>
-                                    The heat map shows the price distribution for each form factor of a computer given brand.
+                                    - The heat map shows the price distribution for each form factor of a computer given brand.
                                     Each cell represents the average price of all cmoputers that belong to a 
                                     certain brand and form factor. Dark blue represents the cheapest price 
                                     while dark red represents the highest.   
                                 <br></br>
-                                    It is clear that form factors such as the Workstation, Ultrabook, 
+                                    - It is clear that form factors such as the Workstation, Ultrabook, 
                                     and Gaming tend to be the most expensive types of computer, while Mainstream and ATX's are the cheapest.
                                 </p>
                             </div>

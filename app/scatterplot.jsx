@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 // Accept width and height as props
 const ScatterPlot = ({ width, height }) => {
     const ref = useRef(null);
+    const [topK, setTopK] = useState([]);
 
     useEffect(() => {
         const container = ref.current;
@@ -17,34 +18,30 @@ const ScatterPlot = ({ width, height }) => {
         
         const innerWidth = width - margin.left - margin.right;
         const innerHeight = height - margin.top - margin.bottom;
-        
+        const logo_radius = 25
+
         const svg = d3.select(container)
             .append("svg")
             .attr("width", width)
             .attr("height", height)
             .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+            .attr("transform", `translate(${margin.left},${margin.top})`)
         
+        const doubleclick = function(event, d){
+            console.log("background click");
+            setTopK([]);
+        }
+        console.log(topK)
+        d3.select("body")
+            .on("dblclick", doubleclick);
+
+
         d3.csv("/tsne.csv").then(function(data) {
             
-            const dataSubset = data.slice(0, 200)
-            // const dataMap = dataSubset.map(d => ({
-            //     dimX: +d.dimX,
-            //     dimY: +d.dimY,
-            //     price: +d.price,
-            //     label: d.label,
-            //     cpu_cores: +d.cpu_cores,
-            //     cpu_base_ghz: +d.cpu_base_ghz,
-            //     cpu_boost_ghz: +d.cpu_boost_ghz,
-            //     cpu_threads: +d.cpu_threads,
-            //     cpu_score: +d.cpu_score,
-            //     cpu_model: +d.cpu_model
-            // }));
-
-            const dataMap = dataSubset;
+            const dataMap = data.slice(0, 50)
 
             const sizeScale = d3.scaleLinear()
-                .domain(d3.extent(dataSubset, d => +d.cpu_cores))
+                .domain(d3.extent(dataMap, d => +d.cpu_cores))
                 .range([10, 30])
 
             const filteredData = dataMap.filter(d => d.label !== "") // get rid of rows with no label
@@ -53,22 +50,10 @@ const ScatterPlot = ({ width, height }) => {
             const x = d3.scaleLinear()
                 .range([0, innerWidth - margin.left - margin.right])
                 .domain(d3.extent(dataMap, d => +d.dimX))
-            // svg.append("g")
-            //     .attr("transform", `translate(0, ${innerHeight})`)
-            //     .call(d3.axisBottom(x))
-            //     .selectAll("text")
-            //         .style("fill", "black")
         
             const y = d3.scaleLinear()
                 .range([innerHeight, 0])
                 .domain(d3.extent(dataMap, d => +d.dimY))
-
-            // svg.append("g")
-            //     .style("fill", "black")
-            //     .call(d3.axisLeft(y).tickSize(0))
-            //     .selectAll("text")
-            //         .style("fill", "black")
-            //     .select(".domain").remove();
         
             const groupKeys = Array.from(chipGroup.keys())
             const myColor = d3.scaleOrdinal(d3.schemeCategory10 )
@@ -86,8 +71,15 @@ const ScatterPlot = ({ width, height }) => {
                 .style("position", "absolute");
 
             const mouseover = function(event, d) {
+                simulation.alphaTarget(0.4).restart();   // wake up simulation
                 tooltip.style("opacity", 1);
-                d3.select(this).style("stroke", "black").style("opacity", 1);   
+                d3.select(this)
+                    .transition()
+                    .duration(100)
+                    .style("stroke", "black")
+                    .style("opacity", 1)
+                    .attr("width", logo_radius + 25)
+                    .attr("height", logo_radius + 25);   
             }
             const mousemove = function(event, d) {
                 const [x, y] = d3.pointer(event, container);
@@ -97,12 +89,35 @@ const ScatterPlot = ({ width, height }) => {
                     .style("left", (x + 10) + "px")
                     .style("top", (y + 10) + "px");
             }
-            const mouseleave = function(event, d) {
-                tooltip.style("opacity", 0);
-                d3.select(this).style("stroke", "none").style("opacity", 0.8);
+
+            const mouseclick = function(event, d) {
+                const [x, y] = d3.pointer(event, container);
+                console.log(d)
+                const results = [d];
+                const percent_diff_threshold = 0.1
+                for (const data of filteredData) {
+                    const percent_diff = Math.abs( (parseFloat(data.cpu_score) - parseFloat(d.cpu_score)) / ((parseFloat(data.cpu_score) + parseFloat(d.cpu_score))/2));
+                    if (percent_diff < percent_diff_threshold && parseFloat(data.price) < parseFloat(d.price)){
+                        results.push(data);
+                    }
+                    if (results.length > 3) break;
+                }
+                setTopK(results);
+                console.log(results)
             }
 
-            const logo_radius = 25
+            const mouseleave = function(event, d) {
+                simulation.alphaTarget(0);               // let it cool
+                tooltip.style("opacity", 0);
+                d3.select(this)
+                    .transition()
+                    .duration(100)
+                    .style("stroke", "none")
+                    .style("opacity", 0.8)
+                    .attr("width", logo_radius)
+                    .attr("height", logo_radius);   
+            }
+
             svg.selectAll("image.node-logo")
                 .data(filteredData, (d, i) => i)
                 .enter()
@@ -126,7 +141,33 @@ const ScatterPlot = ({ width, height }) => {
                     .attr("preserveAspectRatio", "xMidYMid meet")
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave);     
+                    .on("mouseleave", mouseleave)
+                    .on("click", mouseclick);
+
+            if (topK.length <= 1) {
+                svg.selectAll(".topk-line").remove();
+                console.log("removing")
+            } else {
+                const anchor = topK[0];
+                console.log("test")
+                svg.selectAll(".topk-line")
+                    .data(topK.slice(1))
+                    .join(
+                        enter => enter.append("line")
+                            .attr("class", "topk-line")
+                            .attr("x1", x(anchor.dimX))
+                            .attr("y1", y(anchor.dimY))
+                            .attr("x2", d => x(d.dimX))
+                            .attr("y2", d => y(d.dimY))
+                            .attr("stroke", "black"),
+                        update => update
+                            .attr("x1", x(anchor.dimX))
+                            .attr("y1", y(anchor.dimY))
+                            .attr("x2", d => x(d.dimX))
+                            .attr("y2", d => y(d.dimY)),
+                        exit => exit.remove()
+                    );
+            }
 
             // Avoid collision and overlapping
             const simulation = d3.forceSimulation(filteredData)
@@ -174,7 +215,7 @@ const ScatterPlot = ({ width, height }) => {
         });
 
     // Re-run this effect whenever width or height changes
-    }, [width, height]);
+    }, [topK]);
 
     return <div ref={ref} className="relative w-full h-full" />;
 };

@@ -58,7 +58,6 @@ const RadarChart = ({ width, height }) => {
             .attr("class", "radar-chart")
             .attr("width", width)
             .attr("height", height)
-            // .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
         
         // Draw axis fine

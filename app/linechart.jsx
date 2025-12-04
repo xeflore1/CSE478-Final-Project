@@ -70,16 +70,16 @@ const LineChart = ({ width, height }) => {
                 .attr("transform", `translate(0, ${innerHeight-20})`)
                 .call(d3.axisBottom(x))
                 .call(g => {
-                    g.selectAll("text").style("fill", "black")
-                    g.selectAll(".tick line").style("stroke", "black")
-                    g.select(".domain").style("stroke", "black")
+                    g.selectAll("text").style("fill", "white")
+                    g.selectAll(".tick line").style("stroke", "white")
+                    g.select(".domain").style("stroke", "white")
                 });
             svg.append("text")
                 .attr("text-anchor", "middle")
                 .attr("x", (innerWidth/2))
                 .attr("y", innerHeight + 18)
                 .style("font-size", "14px")
-                .style("fill", "black")
+                .style("fill", "white")
                 .text("Release year");
         
             // y axis
@@ -87,18 +87,18 @@ const LineChart = ({ width, height }) => {
                 .range([innerHeight-20, 0])
                 .domain([1600, 2400])
             svg.append("g")
-                .style("fill", "black")
+                .style("fill", "white")
                 .call(d3.axisLeft(y).tickSize(0))
                 .call(g => {
-                    g.selectAll("text").style("fill", "black")
-                    g.selectAll(".tick line").style("stroke", "black")
-                    g.select(".domain").style("stroke", "black")
+                    g.selectAll("text").style("fill", "white")
+                    g.selectAll(".tick line").style("stroke", "white")
+                    g.select(".domain").style("stroke", "white")
                 });
             svg.append("text")
                 .attr("text-anchor", "middle")
                 .attr("transform", `translate(-45, ${innerHeight/2}) rotate(90)`)
                 .style("font-size", "14px")
-                .style("fill", "black")
+                .style("fill", "white")
                 .text("Price (in $)");
         
             const groupKeys = Array.from(brandGroup.keys())
@@ -177,7 +177,7 @@ const LineChart = ({ width, height }) => {
                 .attr("x", (innerWidth/2))
                 .attr("y", -20)
                 .style("font-size", "14px")
-                .style("fill", "black")
+                .style("fill", "white")
                 .text("Line chart");
 
             // Add one dot in the legend for each name.

@@ -33,76 +33,186 @@ const GraphStep = ({ index, currentStepIndex }) => {
     const dimensions = useResizeObserver(containerRef);
 
     return (
-        <div className={`flex w-screen h-[80vh] mb-20 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse' }`}>
-            
-            {/* Graph Section */}
-            <div className="w-2/3 flex items-center justify-center">
-                <div 
-                    ref={containerRef} 
-                    className={`w-11/12 h-5/6 transition-all duration-700 border-4 relative
-                    ${index % 2 === 0 ? ' border-amber-500' : ' border-blue-500'}
-                    ${currentStepIndex === index ? 'opacity-100 scale-100' : 'opacity-40 scale-95'}
-                    `}
-                >
-                    {(dimensions && index === 0) && (
-                        <LineChart 
-                            width={dimensions.width} 
-                            height={dimensions.height} 
-                        />
-                    )}
-                    {(dimensions && index === 1) && (
-                        <HeatMap 
-                            width={dimensions.width} 
-                            height={dimensions.height} 
-                        />
-                    )}
-                    {(dimensions && index === 2) && (
-                        <ScatterPlot 
-                            width={dimensions.width} 
-                            height={dimensions.height} 
-                        />
-                    )}
-                    {(dimensions && index === 3) && (
-                        <RadarChart 
-                            width={dimensions.width} 
-                            height={dimensions.height} 
-                        />
-                    )}
-                    {(dimensions && index === 4) && (
-                        <BarChart 
-                            width={dimensions.width} 
-                            height={dimensions.height} 
-                        />
-                    )}
-                    {/* FIXME: add options for the other graphs, ex:  */}
-                    {/* {(dimensions && index === <NUM CORRESPONDING TO YOUR GRAPH>) && (
-                        <YOUR GRAPH COMPONENT>
-                    )} */}
+        <div className='w-screen'>
+            <div className={`flex w-screen h-[80vh] mb-20 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse' }`}>
+                
+                {/* Graph Section */}
+                <div className="w-2/3 flex items-center justify-center">
+                    <div 
+                        ref={containerRef} 
+                        className={`w-11/12 h-5/6 transition-all duration-700 border-4 relative
+                        ${index % 2 === 0 ? ' border-amber-500' : ' border-blue-500'}
+                        ${currentStepIndex === index ? 'opacity-100 scale-100' : 'opacity-40 scale-95'}
+                        `}
+                    >
+                        {(dimensions && index === 0) && (
+                            <LineChart 
+                                width={dimensions.width} 
+                                height={dimensions.height} 
+                            />
+                        )}
+                        {(dimensions && index === 1) && (
+                            <BarChart 
+                                width={dimensions.width} 
+                                height={dimensions.height} 
+                            />
+                        )}
+                        {(dimensions && index === 2) && (
+                            <RadarChart 
+                                width={dimensions.width} 
+                                height={dimensions.height} 
+                            />
+                        )}
+                        {(dimensions && index === 3) && (
+                            <ScatterPlot 
+                                width={dimensions.width} 
+                                height={dimensions.height} 
+                            />
+                        )}
+                        {(dimensions && index === 4) && (
+                            <HeatMap 
+                                width={dimensions.width} 
+                                height={dimensions.height} 
+                            />
+                        )}
+                        {/* FIXME: add options for the other graphs, ex:  */}
+                        {/* {(dimensions && index === <NUM CORRESPONDING TO YOUR GRAPH>) && (
+                            <YOUR GRAPH COMPONENT>
+                        )} */}
+                    </div>
                 </div>
-            </div>
 
-            {/* Text Blurb */}
-            <div className="w-1/3 flex items-center justify-center relative overflow-hidden">
-                <div className={`w-10/12 transition-all duration-700 text-lg font-medium
-                ${currentStepIndex === index ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}
-                `}>
-                    {index === 0 && (
-                        <p className='text-black'>Line chart.</p>
-                    )}
-                    {index === 1 && (
-                        <p className='text-black'>Heat map</p>
-                    )}
-                    {index === 2 && (
-                        <p className='text-black'>Scatter plot</p>
-                    )}
-                    {index === 3 && (
-                        <p className='text-black'>Insert Description.</p>
-                    )}
-                    {index === 4 && (
-                        <p className='text-black'>Insert Description.</p>
-                    )}
+                {/* Text Blurb */}
+                <div className="w-1/3 flex items-center justify-center relative overflow-hidden">
+                    <div className={`w-10/12 transition-all duration-700 text-lg font-medium
+                    ${currentStepIndex === index ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}
+                    `}>
+                        {index === 0 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-right'>
+                                    <strong>Price Depreciation Over Time</strong>
+                                </p>
+                                <p className='text-black text-right'>
+                                    This line chart shows the price distribution over the years for each brand of computer.
+                                    The lines are generated by taking the average price of all computers that have the 
+                                    same year and brand. 
+                                    <br></br>
+                                    We can see that an immediate driver of cost is recency, as older computers sit near the bottom of the price bracket
+                                    where as newer ones sit near the top. We can also see the importance of <strong>brand power</strong>. While most of
+                                    the lines are clustered together, Apple computers are generally more expensive by a wide margin, regardless of release year. 
+                                </p>
+                            </div>
+                        )}
+                        {index === 1 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-left'>
+                                    <strong>The Saturation Effect</strong>
+                                </p>
+                                <p className='text-black text-;eft'>
+                                    The stacked bar chart shows the number of computers each brand has over the years.
+                                    Each bar represents the total amount of computers for that year, and each bar is split 
+                                    into subgroups to represent the portion each brand takes up. 
+                                    <br></br>
+                                    If scarcity drove prices up, we would expect to see fewer computers in recent years. 
+                                    Instead, we see an explosion in volume. The number of available models peaked in 2023 and 2024 (It should be noted 2025 is not over yet, that may be in part why its amount is not near the peak of previous years.), 
+                                    with brands like Lenovo and Dell flooding the market. Despite this massive saturation of options, which 
+                                    usually drives prices down, the average costs (from the previous chart) kept climbing.
+                                </p>
+                            </div>
+
+                        )}
+                        {index === 2 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-left'>
+                                    <strong>Who charges for what?</strong>
+                                </p>
+                                <p className='text-black text-left'>
+                                    This series of interactive radar charts compares price, GPU score, and CPU score for different brands, CPU's, Desktops, and Laptops.
+                                    <br></br>
+                                    We can clearly see that <strong>specialization</strong> drives the highest price tags. 
+                                    Apple commands the market lead by focusing on CPU-heavy workstations, 
+                                    while Razer justifies its premium pricing through GPU-dominant gaming rigs. 
+                                    Beyond brand identity, <strong>form factor</strong> plays a crucial role. 
+                                    Laptops are consistently more expensive than desktops, even when performance is identical. 
+                                    This suggests that consumers are not just paying for power, they are paying for the engineering required to fit that power into a portable chassis.
+                                </p>
+                            </div>
+                        )}
+                        {index === 3 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-left'>
+                                    <strong>FINISH LATER</strong>
+                                </p>
+                                <p className='text-black text-left'>
+                                    <br></br>
+                                    This visualization maps the "brain" of the computer. Using a clustering algorithm, we see that higher prices (represented by larger bubbles) 
+                                    are not randomly distributed. They congregate in specific high-performance clusters. While AMD and Intel chips are scattered across the 
+                                    spectrum offering both low/high-end options, Apple’s chips (Green) form tight, exclusive clusters. This indicates that specific 
+                                    processor models are a primary lever for dictating the final price tag.
+                                </p>
+                            </div>
+                        )}
+                        {index === 4 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-left'>
+                                    <strong>The Premium Matrix</strong>
+                                </p>
+                                <p className='text-black text-left'>
+                                    The heat map shows the price distribution for each form factor of a computer given brand.
+                                    Each cell represents the average price of all cmoputers that belong to a 
+                                    certain brand and form factor. Dark blue represents the cheapest price 
+                                    while dark red represents the highest.   
+                                <br></br>
+                                    It is clear that form factors such as the Workstation, Ultrabook, 
+                                    and Gaming tend to be the most expensive types of computer, while Mainstream and ATX's are the cheapest.
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
+            {/* Barrier text */}
+                <div className={`w-screen transition-all duration-700 text-lg font-medium
+                    ${currentStepIndex === index ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}
+                    `}>
+                        {index === 0 && (
+                            <div className=''>
+                                <p className='text-black text-xl text-center'>
+                                    <strong>But time isn't the only factor. If prices are rising despite an aging market, is it because of a lack of supply? 
+                                        The next chart suggests the opposite.</strong>
+                                </p>
+                            </div>
+                        )}
+                        {index === 1 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-center'>
+                                    <strong>If low supply isn't driving prices up, the cost must be coming from inside the machine. We need to look at the hardware itself.</strong>
+                                </p>
+                            </div>
+                        )}
+                        {index === 2 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-center'>
+                                    <strong>We know desktops differ from laptops, but what about the engines running them? Are all processors created equal?</strong>
+                                </p>
+                            </div>
+                        )}
+                        {index === 3 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-center'>
+                                    <strong>So we have age, supply, form factor, and silicon. But when we combine them all, who charges the most?</strong>
+                                </p>
+                            </div>
+                        )}
+                        {index === 4 && (
+                            <div className='flex flex-col gap-y-2'>
+                                <p className='text-black text-xl text-center'>
+                                    <strong>Ultimately, the highest price tags are reserved for specialized tools from prestige brands, compounded by a 'recency tax' for the latest technology. </strong>
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
         </div>
     );
 };
@@ -118,7 +228,7 @@ const ScrollamaDemo = () => {
   return (
       <div className="py-[10vh] bg-white">
         <div className="flex top-0 border-2 justify-center"> 
-            <h1 className='text-4xl text-black'>Computer Story</h1>
+            <h1 className='text-4xl text-black'>What Affects Computer Cost?</h1>
         </div>
         <Scrollama offset={0.6} onStepEnter={onStepEnter}>
             {[0, 1, 2, 3, 4].map((i) => (

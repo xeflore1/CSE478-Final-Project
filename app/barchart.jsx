@@ -75,7 +75,13 @@ const BarChart = ({ width, height }) => {
                 svg.append("g")
                     .attr("transform", `translate(0,${innerHeight-margin.bottom})`)
                     .call(d3.axisBottom(x).tickSizeOuter(0))
-                    .call(g => g.selectAll(".domain").remove());
+                    .call(g => { 
+                        g.selectAll(".tick line")
+                            .style("stroke", "black")
+                        g.selectAll("text")
+                            .style("fill", "black");
+                        g.selectAll(".domain").remove()
+                    })
                 svg.append("text")
                     .attr("text-anchor", "middle")
                     .attr("x", (innerWidth/2))
@@ -90,7 +96,13 @@ const BarChart = ({ width, height }) => {
             svg.append("g")
                 .attr("transform", `translate(0,0)`)
                 .call(d3.axisLeft(y).ticks(null, "s"))
-                .call(g => g.selectAll(".domain").remove());
+                .call(g => { 
+                    g.selectAll(".tick line")
+                        .style("stroke", "black")
+                    g.selectAll("text")
+                        .style("fill", "black");
+                    g.selectAll(".domain").remove()
+                })
                 svg.append("text")
                     .attr("text-anchor", "middle")
                     .attr("transform", `translate(-45, ${innerHeight/2}) rotate(90)`)

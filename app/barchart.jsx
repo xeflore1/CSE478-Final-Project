@@ -42,9 +42,6 @@ const BarChart = ({ width, height }) => {
                 d => d.brand,
                 d => d.release_year
             );
-            console.log("grouped")
-            console.log(grouped)
-
 
             const formattedData = Array.from(grouped, ([brand, yearMap]) => {
                 const values = Array.from(yearMap, ([release_year, length]) => ({

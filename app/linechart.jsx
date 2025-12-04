@@ -158,8 +158,6 @@ const LineChart = ({ width, height }) => {
                 }))
             );
             // add circles 
-            console.log("flatdata")
-            console.log(flatData)
             svg.selectAll("circle")
                 .data(flatData)
                 .join("circle")

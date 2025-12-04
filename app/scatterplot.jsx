@@ -55,8 +55,6 @@ const ScatterPlot = ({ width, height }) => {
                 .range([innerHeight, 0])
                 .domain(d3.extent(dataMap, d => +d.dimY))
         
-            const groupKeys = Array.from(chipGroup.keys())
-
 
             // Prepare axes for gridlines
             svg.append("g")

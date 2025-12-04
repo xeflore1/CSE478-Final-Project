@@ -69,7 +69,7 @@ const RadarChart = ({ width, height }) => {
                     .attr("y1", centerY)
                     .attr("x2", d => d.line_coord.x)
                     .attr("y2", d => d.line_coord.y)
-                    .attr("stroke", "black")
+                    .attr("stroke", "white")
             )
 
         // Draw axis label
@@ -80,6 +80,7 @@ const RadarChart = ({ width, height }) => {
                     .attr("class", "axislabel")
                     .attr("x", d => d.label_coord.x - 20)
                     .attr("y", d => d.label_coord.y + 10)
+                    .attr("fill", "white")
                     .text(d => d.name),
                 update => update,
                 exit => exit.remove() // proper exit handler
@@ -114,6 +115,7 @@ const RadarChart = ({ width, height }) => {
                         .attr("x", p => p.x + 8)
                         .attr("y", p => p.y + 3)
                         .attr("font-size", font_size)
+                        .attr("fill", "white")
                         .style("opacity", 1)
                         // .attr("fill", p => color(p.raw[attribute_lbl]))
                         .text((p,i) => d3.format(".2f")(p.raw[features[i]]));
@@ -164,6 +166,7 @@ const RadarChart = ({ width, height }) => {
                         .attr("x", p => p.x + 8)
                         .attr("y", p => p.y + 3)
                         .attr("font-size", font_size)
+                        .attr("fill", "white")
                         .style("opacity", 1)
                         // .attr("fill", p => color(p.raw[attribute_lbl]))
                         .text((p,i) => d3.format(".2f")(p.raw[features[i]]));
@@ -263,7 +266,7 @@ const RadarChart = ({ width, height }) => {
     const AttributeButton = (label, idx) => {
         if (selectedLabel === label){
             return (
-                <button key={idx} className="h-8 px-12 bg-gray-800 opacity-70 text-white text-xs rounded cursor-pointer">
+                <button key={idx} className="h-8 px-12 bg-[#0a4abf] text-[#fff200] text-xs rounded cursor-pointer">
                     {label}
                 </button>
             )
@@ -277,7 +280,7 @@ const RadarChart = ({ width, height }) => {
     }
  
     return (
-        <div className="flex w-full h-[500px]">
+        <div className="flex w-full h-[500px] border border-white">
             <svg ref={ref} className="absolute" />
             <div className="absolute flex-col h-full w-full flex items-end justify-center space-y-2 px-4">
                 {dataset && categories.map((feature, idx) => (

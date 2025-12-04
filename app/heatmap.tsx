@@ -55,14 +55,14 @@ const HeatMap = ({ width, height }) => {
                 .attr("transform", `translate(0, ${innerHeight})`)
                 .call(d3.axisBottom(x).tickSize(0))
                 .selectAll("text")
-                    .style("fill", "black")
+                    .style("fill", "white")
             .select(".domain").remove();
             svg.append("text")
                 .attr("text-anchor", "middle")
                 .attr("x", innerWidth/2)
                 .attr("y", innerHeight + margin.bottom-15)
                 .style("font-size", "14px")
-                .style("fill", "black")
+                .style("fill", "white")
                 .text("Brand");
         
             const y = d3.scaleBand()
@@ -71,16 +71,16 @@ const HeatMap = ({ width, height }) => {
                 .padding(0.05);
             svg.append("g")
                 .style("font-size", 12)
-                .style("fill", "black")
+                .style("fill", "white")
                 .call(d3.axisLeft(y).tickSize(0))
                 .selectAll("text")
-                    .style("fill", "black")
+                    .style("fill", "white")
             .select(".domain").remove();
             svg.append("text")
                 .attr("text-anchor", "middle")
                 .attr("transform", `translate(-75, ${innerHeight/2}) rotate(90)`)
                 .style("font-size", "14px")
-                .style("fill", "black")
+                .style("fill", "white")
                 .text("Form Factor");
         
             const [minValue, maxValue] = d3.extent(ratioData, d => d.value);
@@ -138,7 +138,7 @@ const HeatMap = ({ width, height }) => {
                 .attr("x", (innerWidth/2))
                 .attr("y", -20)
                 .style("font-size", "14px")
-                .style("fill", "black")
+                .style("fill", "white")
                 .text("Price Distribution");
               
         });

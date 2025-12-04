@@ -103,11 +103,11 @@ const GraphStep = ({ index, currentStepIndex }) => {
                             </div>
                         )}
                         {index === 1 && (
-                            <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-left'>
+                            <div className='flex flex-col gap-y-2 bg-[#0a4abf] px-6 py-4 rounded-lg'>
+                                <p className='text-[#fff200] text-xl text-left'>
                                     <strong>The Saturation Effect</strong>
                                 </p>
-                                <p className='text-black text-;eft'>
+                                <p className='text-white text-;eft'>
                                     The stacked bar chart shows the number of computers each brand has over the years.
                                     Each bar represents the total amount of computers for that year, and each bar is split 
                                     into subgroups to represent the portion each brand takes up. 
@@ -121,11 +121,11 @@ const GraphStep = ({ index, currentStepIndex }) => {
 
                         )}
                         {index === 2 && (
-                            <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-left'>
+                            <div className='flex flex-col gap-y-2 bg-[#0a4abf] px-6 py-4 rounded-lg'>
+                                <p className='text-[#fff200] text-xl text-left'>
                                     <strong>Who charges for what?</strong>
                                 </p>
-                                <p className='text-black text-left'>
+                                <p className='text-white text-left'>
                                     This series of interactive radar charts compares price, GPU score, and CPU score for different brands, CPU's, Desktops, and Laptops.
                                     <br></br>
                                     We can clearly see that <strong>specialization</strong> drives the highest price tags. 
@@ -138,11 +138,11 @@ const GraphStep = ({ index, currentStepIndex }) => {
                             </div>
                         )}
                         {index === 3 && (
-                            <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-left'>
+                            <div className='flex flex-col gap-y-2 bg-[#0a4abf] px-6 py-4 rounded-lg'>
+                                <p className='text-[#fff200] text-xl text-left'>
                                     <strong>FINISH LATER</strong>
                                 </p>
-                                <p className='text-black text-left'>
+                                <p className='text-white text-left'>
                                     <br></br>
                                     This visualization maps the "brain" of the computer. Using a clustering algorithm, we see that higher prices (represented by larger bubbles) 
                                     are not randomly distributed. They congregate in specific high-performance clusters. While AMD and Intel chips are scattered across the 
@@ -152,11 +152,11 @@ const GraphStep = ({ index, currentStepIndex }) => {
                             </div>
                         )}
                         {index === 4 && (
-                            <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-left'>
+                            <div className='flex flex-col gap-y-2 bg-[#0a4abf] px-6 py-4 rounded-lg'>
+                                <p className='text-[#fff200] text-xl text-left'>
                                     <strong>The Premium Matrix</strong>
                                 </p>
-                                <p className='text-black text-left'>
+                                <p className='text-white text-left'>
                                     The heat map shows the price distribution for each form factor of a computer given brand.
                                     Each cell represents the average price of all cmoputers that belong to a 
                                     certain brand and form factor. Dark blue represents the cheapest price 
@@ -184,28 +184,28 @@ const GraphStep = ({ index, currentStepIndex }) => {
                         )}
                         {index === 1 && (
                             <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-center'>
+                                <p className='text-[#fff200] bg-[#0a4abf] text-xl text-center'>
                                     <strong>If low supply isn't driving prices up, the cost must be coming from inside the machine. We need to look at the hardware itself.</strong>
                                 </p>
                             </div>
                         )}
                         {index === 2 && (
                             <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-center'>
+                                <p className='text-[#fff200] bg-[#0a4abf] text-xl text-center'>
                                     <strong>We know desktops differ from laptops, but what about the engines running them? Are all processors created equal?</strong>
                                 </p>
                             </div>
                         )}
                         {index === 3 && (
                             <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-center'>
+                                <p className='text-[#fff200] bg-[#0a4abf] text-xl text-center'>
                                     <strong>So we have age, supply, form factor, and silicon. But when we combine them all, who charges the most?</strong>
                                 </p>
                             </div>
                         )}
                         {index === 4 && (
                             <div className='flex flex-col gap-y-2'>
-                                <p className='text-black text-xl text-center'>
+                                <p className='text-[#fff200] bg-[#0a4abf] text-xl text-center'>
                                     <strong>Ultimately, the highest price tags are reserved for specialized tools from prestige brands, compounded by a 'recency tax' for the latest technology. </strong>
                                 </p>
                             </div>

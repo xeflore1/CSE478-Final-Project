@@ -186,7 +186,7 @@ const ScatterPlot = ({ width, height }) => {
                 .attr("x", (innerWidth/2))
                 .attr("y", -20)
                 .style("font-size", "14px")
-                .style("fill", "black")
+                .style("fill", "white")
                 .text("CPU Similarity Chart");
 
             // Add one dot in the legend for each name.
@@ -217,7 +217,7 @@ const ScatterPlot = ({ width, height }) => {
     // Re-run this effect whenever width or height changes
     }, [topK]);
 
-    return <div ref={ref} className="relative w-full h-full" />;
+    return <div ref={ref} className="relative w-full h-full border border-white" />;
 };
 
 export default ScatterPlot;

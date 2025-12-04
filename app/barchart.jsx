@@ -77,17 +77,17 @@ const BarChart = ({ width, height }) => {
                     .call(d3.axisBottom(x).tickSizeOuter(0))
                     .call(g => { 
                         g.selectAll(".tick line")
-                            .style("stroke", "black")
+                            .style("stroke", "white")
                         g.selectAll("text")
-                            .style("fill", "black");
-                        g.selectAll(".domain").remove()
+                            .style("fill", "white");
+                        g.selectAll(".domain").style("stroke", "white")
                     })
                 svg.append("text")
                     .attr("text-anchor", "middle")
                     .attr("x", (innerWidth/2))
                     .attr("y", innerHeight + 18)
                     .style("font-size", "14px")
-                    .style("fill", "black")
+                    .style("fill", "white")
                     .text("Release year");
 
             const y = d3.scaleLinear()
@@ -98,16 +98,16 @@ const BarChart = ({ width, height }) => {
                 .call(d3.axisLeft(y).ticks(null, "s"))
                 .call(g => { 
                     g.selectAll(".tick line")
-                        .style("stroke", "black")
+                        .style("stroke", "white")
                     g.selectAll("text")
-                        .style("fill", "black");
-                    g.selectAll(".domain").remove()
+                        .style("fill", "white");
+                    g.selectAll(".domain").style("stroke", "white")
                 })
                 svg.append("text")
                     .attr("text-anchor", "middle")
                     .attr("transform", `translate(-45, ${innerHeight/2}) rotate(90)`)
                     .style("font-size", "14px")
-                    .style("fill", "black")
+                    .style("fill", "white")
                     .text("Number of Computers");
 
             const color = d3.scaleOrdinal()

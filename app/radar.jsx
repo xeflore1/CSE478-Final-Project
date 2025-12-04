@@ -24,7 +24,9 @@ const RadarChart = ({ width, height }) => {
         const centerX = width/2;
         const centerY = height/2;
         const maxRadius = Math.min(centerX, centerY)*0.9;
-        const radialScale = d3.scaleLinear().domain([0, 1]).range([0, maxRadius])
+        const radialScale = d3.scaleLinear()
+            .domain([0, 1])
+            .range([0, maxRadius])
 
         function angleToCoordinate(angle, value){
             let x = Math.cos(angle) * radialScale(value);
@@ -47,12 +49,12 @@ const RadarChart = ({ width, height }) => {
             for (var i = 0; i < features.length; i++){
                 let ft_name = features[i];
                 let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
-                coordinates.push(angleToCoordinate(angle, data_point[ft_name]))
+                coordinates.push(angleToCoordinate(angle, data_point[ft_name]*0.85))
             }
             return coordinates;
         }
 
-        const margin = {top: 50, right: 30, bottom: 30, left: 0};
+        const margin = {top: 20, right: 30, bottom: 30, left: 0};
         
         const svg = d3.select(container)
             .attr("class", "radar-chart")

@@ -38,7 +38,7 @@ const ScatterPlot = ({ width, height }) => {
 
         d3.csv("/tsne.csv").then(function(data) {
             
-            const dataMap = data.slice(0, 50)
+            const dataMap = data.slice(100, 200)
 
             const sizeScale = d3.scaleLinear()
                 .domain(d3.extent(dataMap, d => +d.cpu_cores))

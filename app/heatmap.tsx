@@ -131,15 +131,63 @@ const HeatMap = ({ width, height }) => {
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave);
+
+            // color legend
+            const legendWidth = 20;
+            const legendHeight = 200;
+            const legendX = innerWidth + 20;
+            const legendY = (innerHeight - legendHeight) / 2;
             
-            // Centered Title
+            // create gradient
+            const defs = svg.append("defs");
+            const linearGradient = defs.append("linearGradient")
+                .attr("id", "legendGradient")
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "0%")
+                .attr("y2", "100%");
+            
+            // add color stops to gradient
+            const numStops = 10;
+            for (let i = 0; i <= numStops; i++) {
+                const offset = (i / numStops) * 100;
+                const price = maxValue - (i / numStops) * (maxValue - minValue);
+                linearGradient.append("stop")
+                    .attr("offset", `${offset}%`)
+                    .attr("stop-color", myColor(price));
+            }
+            
+            // draw legend rectangle
+            svg.append("rect")
+                .attr("x", legendX)
+                .attr("y", legendY)
+                .attr("width", legendWidth)
+                .attr("height", legendHeight)
+                .style("fill", "url(#legendGradient)");
+            
+            // add legend axis
+            const legendScale = d3.scaleLinear()
+                .domain([maxValue, minValue])
+                .range([0, legendHeight]);
+            
+            const legendAxis = d3.axisRight(legendScale)
+                .ticks(5)
+                .tickFormat(d => `$${d.toFixed(0)}`);
+            
+            svg.append("g")
+                .attr("transform", `translate(${legendX + legendWidth}, ${legendY})`)
+                .call(legendAxis)
+                .selectAll("text")
+                .style("fill", "white");
+            
+            // legend title
             svg.append("text")
+                .attr("x", legendX + legendWidth / 2)
+                .attr("y", legendY - 10)
                 .attr("text-anchor", "middle")
-                .attr("x", (innerWidth/2))
-                .attr("y", -20)
-                .style("font-size", "14px")
+                .style("font-size", "12px")
                 .style("fill", "white")
-                .text("Price Distribution");
+                .text("Avg Price");
               
         });
 

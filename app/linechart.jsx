@@ -168,15 +168,6 @@ const LineChart = ({ width, height }) => {
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave); 
-            
-            // Centered Title
-            svg.append("text")
-                .attr("text-anchor", "middle")
-                .attr("x", (innerWidth/2))
-                .attr("y", -20)
-                .style("font-size", "14px")
-                .style("fill", "white")
-                .text("Line chart");
 
             // Add one dot in the legend for each name.
             var size = 20
@@ -184,7 +175,7 @@ const LineChart = ({ width, height }) => {
             .data(groupKeys)
             .enter()
             .append("rect")
-                .attr("x", innerWidth - margin.left - margin.right )
+                .attr("x", innerWidth - margin.left - 15 )
                 .attr("y", function(d,i){ return  i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
                 .attr("width", size)
                 .attr("height", size)
@@ -195,7 +186,7 @@ const LineChart = ({ width, height }) => {
             .data(groupKeys)
             .enter()
             .append("text")
-                .attr("x", (innerWidth - margin.left - margin.right) + size*1.2)
+                .attr("x", (innerWidth - margin.left - 15) + size*1.2)
                 .attr("y", function(d,i){ return  i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
                 .style("fill", function(d){ return myColor(d)})
                 .text(function(d){ return d})

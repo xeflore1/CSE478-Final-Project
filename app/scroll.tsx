@@ -251,7 +251,7 @@ const ScrollamaDemo = () => {
             <div className="relative z-10 flex h-full justify-center items-center"> 
                 <div className="flex-col flex h-20 w-screen rounded-xl space-y-10 justify-center items-center shadow-lg">
                     <h1 className='text-6xl text-[#f6eb16] font-bold'>What Affects Computer Cost?</h1>
-                    <h3 className='text-2xl text-center font-light w-2/4 opacity-70'>Expore how core product characteristics such as the brand, CPU specs, and physical design influence both the item's performance and its financial value over time.
+                    <h3 className='text-2xl text-gray-100 text-center font-light w-2/4 opacity-70'>Expore how core product characteristics such as the brand, CPU specs, and physical design influence both the item's performance and its financial value over time.
 </h3>
                 </div>
             </div>

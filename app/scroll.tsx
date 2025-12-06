@@ -216,8 +216,8 @@ const GraphStep = ({ index, currentStepIndex }) => {
                                     <br />
                                     <br />
                                 </p>
-                                <hr className='border-[#fff200]' />
-                                <p className='text-[#fff200] text-xl text-center'>
+                                {/* <hr className='border-[#fff200]' /> */}
+                                <p className='text-[#fff200] bg-gray-900 text-xs text-center text-opacity-50'>
                                     <br />
                                     <strong>Website Created By:</strong>
                                     <br />
